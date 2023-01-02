@@ -16,30 +16,28 @@ const SuperBoostPopup = ({ contentTxId, onClose, onSending, onError, onSuccess }
   const [difficulty, setDifficulty] = useState(0.025)
   const [tag, setTag] = useState('')
   const [price, setPrice] = useState(defaultPricePerDifficulty * difficulty)
+  const [value, setValue] = useState(124_000)
   const [exchangeRate, setExchangeRate] = useState(100)
-  const [value, setValue] = useState(price / exchangeRate)
   const [position, setPosition] = useState(0)
 
   useEffect(() => {
     axios.get('https://api.whatsonchain.com/v1/bsv/main/exchangerate').then((resp) => setExchangeRate(resp.data.rate))
-  })
+  },[])
 
   //difficulty hook
-  useEffect(()=>{
-    setPrice(difficulty * defaultPricePerDifficulty)
+  useEffect(() => {
+    setPrice(defaultPricePerDifficulty * difficulty)
   },[difficulty])
 
-  // price hook
-  useEffect(()=> {
-    setValue(Math.round(price/(exchangeRate *1e-8)))
-  },[price])
-
-  // slider hook
-  useEffect(()=> {
-    setPrice(difficulty*defaultPricePerDifficulty + difficulty*defaultPricePerDifficulty * position / 100)
-    
+  //position hook
+  useEffect(() => {
+    setPrice(defaultPricePerDifficulty*difficulty + (defaultPricePerDifficulty * difficulty * position / 100))
   },[position])
 
+  //price hook
+  useEffect(() => {
+    setValue(Math.round(price * 1e8 / exchangeRate))
+  },[price])
 
 
   const boost = async (contentTxid: string) => {
@@ -166,7 +164,7 @@ const SuperBoostPopup = ({ contentTxId, onClose, onSending, onError, onSuccess }
                 satoshis: {value}
               </div>
               <div className='flex items-center px-10 w-full'>
-                <span className='px-1 text-xl'>🐢</span>
+                <span className='mr-4 text-xl'>🐢</span>
                 <input 
                   type="range" 
                   min={-100} 
@@ -174,7 +172,7 @@ const SuperBoostPopup = ({ contentTxId, onClose, onSending, onError, onSuccess }
                   onChange={handleChangePosition} 
                   value={position} 
                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"/>
-                <span className='px-1 text-xl'>🐇</span>
+                <span className='ml-4 text-xl'>🐇</span>
               </div>
             </div>
             <div className='mb-20 sm:mb-0 p-5 flex items-center text-center justify-center'>

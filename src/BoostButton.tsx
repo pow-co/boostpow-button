@@ -29,37 +29,31 @@ export interface BoostButtonProps {
     const timerRef = useRef<React.RefObject<() => void>>(null)
     const isLongPress = useRef<boolean>(false)
     const superBoostLoading = useRef<React.RefObject<() => void>>(null)
-    const [progress, setProgress] = useState(0);
 
   
-    function startPressTimer() {
-      isLongPress.current = false
-      setAction('')
-  
+     function startPressTimer() {
+    isLongPress.current = false
+    setAction('')
+
+    //@ts-ignore
+    timerRef.current = setTimeout(() => {
+      isLongPress.current = true
+      setSuperBoost(true)
+      setAction('longpress')
+    }, 690)
+
+    //@ts-ignore
+    superBoostLoading.current = setTimeout(() => {
+      if (!isLongPress.current) {
+        return
+      }
       //@ts-ignore
-      timerRef.current = setTimeout(() => {
-        isLongPress.current = true
-        setAction('longpress')
-        setSuperBoost(true)
-        const interval = setInterval(() => {
-          setProgress(prevProgress => prevProgress + 1);
-        }, 21.8); // update progress every 21.8 milliseconds
-    
-        return () => clearInterval(interval);
-      }, 690)
-  
-      //@ts-ignore
-      superBoostLoading.current = setTimeout(() => {
-        if (!isLongPress.current) {
-          return
-        }
-        //@ts-ignore
-        superBoostLoading.current = true
-        setAction('superBoost')
-        setBoostPopupOpen(true)
-        setSuperBoost(false)
-      }, 2180)
-    }
+      superBoostLoading.current = true
+      setAction('superBoost')
+      setBoostPopupOpen(true)
+      setSuperBoost(false)
+    }, 2180)
+  }
   
     const boost = async (contentTxid: string) => {
 
@@ -177,9 +171,9 @@ export interface BoostButtonProps {
   return (
     <>
       <div id='superBoostPopupControler' />
-      {superBoost && !boostPopupOpen && <div className="sm:hidden absolute top-0 left-0 w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+      {/* {superBoost && !boostPopupOpen && <div className="sm:hidden absolute top-0 left-0 w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
         <div className="bg-blue-600 h-2.5 rounded-full duration-4000 ease-in-out" style={{width:`${progress}%`}} ></div>
-      </div>}
+      </div>} */}
       <div
         onClick={handleBoost}
         onMouseDown={handleOnMouseDown}
