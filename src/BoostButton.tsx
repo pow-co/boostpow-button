@@ -185,7 +185,7 @@ export interface BoostButtonProps {
         <div
           className={
             superBoost && !boostPopupOpen
-              ? `absolute justify-center min-h-[42px] min-w-[42px] rounded-full border-t-4 border-green-500 animate-spin`
+              ? `absolute ${!showDifficulty ? "justify-center" : "left-[14px]"}  min-h-[42px] min-w-[42px] rounded-full border-t-4 border-green-500 animate-spin`
               : 'hidden'
           }
         />
