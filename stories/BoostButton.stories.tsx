@@ -9,11 +9,13 @@ const meta: Meta = {
     content: {
       control: {
         type: 'text',
+        default: "114dba7cfe93023c166e6cad44f2ddf5aa7619828d81b4fa64e3fce3aec9eb04"
       },
     },
     value: {
         control: {
           type: 'number',
+          default: 124_000
         },
       },
   }, 
@@ -24,7 +26,7 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: Story<BoostButtonProps> = args => <BoostButton content="test" value={124_000} {...args} />;
+const Template: Story<BoostButtonProps> = args => <BoostButton content="114dba7cfe93023c166e6cad44f2ddf5aa7619828d81b4fa64e3fce3aec9eb04" value={124_000} {...args} />;
 
 // By passing using the Args format for exported stories, you can control the props for a component for reuse in a test
 // https://storybook.js.org/docs/react/workflows/unit-testing

@@ -12,34 +12,39 @@ interface superBoostPopupOptions {
 }
 
 const SuperBoostPopup = ({ contentTxId, onClose, onSending, onError, onSuccess }: superBoostPopupOptions) => {
+  const defaultPricePerDifficulty = 2.18
   const [difficulty, setDifficulty] = useState(0.025)
   const [tag, setTag] = useState('')
-  const [value, setValue] = useState(124_000)
-  const [price, setPrice] = useState(0.05)
-  const [exchangeRate, setExchangeRate] = useState(0)
+  const [price, setPrice] = useState(defaultPricePerDifficulty * difficulty)
+  const [exchangeRate, setExchangeRate] = useState(100)
+  const [value, setValue] = useState(price / exchangeRate)
+  const [position, setPosition] = useState(0)
 
   useEffect(() => {
     axios.get('https://api.whatsonchain.com/v1/bsv/main/exchangerate').then((resp) => setExchangeRate(resp.data.rate))
   })
 
-  useEffect(() => {
-    getPriceForDifficulty(difficulty).then((res) => {
-      setValue(res.satoshis * 1e-8)
-      const dol_amount: number = ((res.satoshis / 1e8) * exchangeRate) / 2
-      setPrice(parseFloat(dol_amount.toFixed(2)))
-    })
-  }, [difficulty, exchangeRate])
+  //difficulty hook
+  useEffect(()=>{
+    setPrice(difficulty * defaultPricePerDifficulty)
+  },[difficulty])
 
-  const getPriceForDifficulty = async (difficulty: number) => {
-    const resp = await axios.get(`https://pow.co/api/v1/boostpow/${contentTxId}/new?difficulty=${difficulty}`)
-    const satoshis: number = resp?.data?.outputs[0]?.amount
+  // price hook
+  useEffect(()=> {
+    setValue(Math.round(price/(exchangeRate *1e-8)))
+  },[price])
 
-    return { satoshis }
-  }
+  // slider hook
+  useEffect(()=> {
+    setPrice(difficulty*defaultPricePerDifficulty + difficulty*defaultPricePerDifficulty * position / 100)
+    
+  },[position])
+
+
 
   const boost = async (contentTxid: string) => {
     //@ts-ignore
-    const stag = wrapRelayx(relayone)
+    const stag = wrapRelayx(window.relayone)
 
     if (onSending) {
       onSending()
@@ -53,7 +58,7 @@ const SuperBoostPopup = ({ contentTxId, onClose, onSending, onError, onSuccess }
         tag: tag,
       })
       //@ts-ignore
-      relayone
+      window.relayone
         .send({
           currency: 'USD',
           amount: 0.001,
@@ -68,6 +73,7 @@ const SuperBoostPopup = ({ contentTxId, onClose, onSending, onError, onSuccess }
       if (onSuccess) {
         onSuccess(boost_result)
       }
+      //@ts-ignore
     } catch (error: any) {
       console.log('stag.boost.error', error)
       if (onError) {
@@ -88,10 +94,16 @@ const SuperBoostPopup = ({ contentTxId, onClose, onSending, onError, onSuccess }
   const handleChangeDifficulty = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault()
     setDifficulty(parseFloat(e.target.value))
+    setPosition(0)
   }
   const handleChangeTag = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault()
     setTag(e.target.value)
+  }
+
+  const handleChangePosition = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    setPosition(parseFloat(e.target.value))
   }
   return (
     <div onClick={(e) => e.stopPropagation()} className='fixed inset-0'>
@@ -130,7 +142,16 @@ const SuperBoostPopup = ({ contentTxId, onClose, onSending, onError, onSuccess }
             </div>
             <div className='grow flex flex-col justify-center items-center'>
               <div className='bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-r-md py-1 pr-2.5'>
-                Custom Difficulty
+                Tag
+              </div>
+              <input
+                className='border border-gray-300 dark:border-gray-700 rounded-l-md text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 py-1 pl-2.5 text-base'
+                type='text'
+                value={tag}
+                onChange={handleChangeTag}
+              />
+              <div className='bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-r-md py-1 pr-2.5'>
+                Difficulty
               </div>
               <input
                 className='border border-gray-300 dark:border-gray-700 rounded-l-md text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 py-1 pl-2.5 text-base'
@@ -142,21 +163,26 @@ const SuperBoostPopup = ({ contentTxId, onClose, onSending, onError, onSuccess }
                 onChange={handleChangeDifficulty}
               />
               <div className='bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-r-md py-1 pr-2.5'>
-                Tag
+                satoshis: {value}
               </div>
-              <input
-                className='border border-gray-300 dark:border-gray-700 rounded-l-md text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 py-1 pl-2.5 text-base'
-                type='text'
-                value={tag}
-                onChange={handleChangeTag}
-              />
+              <div className='flex items-center px-10 w-full'>
+                <span className='px-1 text-xl'>🐢</span>
+                <input 
+                  type="range" 
+                  min={-100} 
+                  max={100} 
+                  onChange={handleChangePosition} 
+                  value={position} 
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"/>
+                <span className='px-1 text-xl'>🐇</span>
+              </div>
             </div>
             <div className='mb-20 sm:mb-0 p-5 flex items-center text-center justify-center'>
               <button
                 onClick={handleBoost}
                 className='text-white bg-gradient-to-tr from-blue-500 to-blue-600 leading-6 py-1 px-10 font-bold border-none rounded cursor-pointer disabled:opacity-50 transition duration-500 transform hover:-translate-y-1'
               >
-                Boost ${price}
+                Boost ${price.toFixed(2)}
               </button>
             </div>
           </div>

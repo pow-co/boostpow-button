@@ -1,4 +1,7 @@
 import React, { useRef, useState} from 'react'
+import { wrapRelayx } from "stag-relayx"
+import SuperBoostPopup from './SuperBoostPopup'
+import Drawer from './Drawer'
 
 export interface BoostBuyResult {
     txid: string
@@ -8,10 +11,10 @@ export interface BoostBuyResult {
 
 export interface BoostButtonProps {
     content: string
-    value: number
+    value?: number
     difficulty?: number
     tag?: string
-    catgory?: string
+    category?: string
     onClick?: () => void
     onSending?: () => void
     onError?: (Error: Error) => void
@@ -19,13 +22,15 @@ export interface BoostButtonProps {
     showDifficulty?: boolean
   }
 
-  const BoostButton = ({ content, difficulty, showDifficulty, onSending, onSuccess, onError }: BoostButtonProps) => {
+  const BoostButton = ({ content, value, difficulty, tag, showDifficulty, onSending, onSuccess, onError }: BoostButtonProps) => {
     const [action, setAction] = useState('')
     const [superBoost, setSuperBoost] = useState(false)
     const [boostPopupOpen, setBoostPopupOpen] = useState(false)
     const timerRef = useRef<React.RefObject<() => void>>(null)
     const isLongPress = useRef<boolean>(false)
     const superBoostLoading = useRef<React.RefObject<() => void>>(null)
+    const [progress, setProgress] = useState(0);
+
   
     function startPressTimer() {
       isLongPress.current = false
@@ -34,8 +39,13 @@ export interface BoostButtonProps {
       //@ts-ignore
       timerRef.current = setTimeout(() => {
         isLongPress.current = true
-        setSuperBoost(true)
         setAction('longpress')
+        setSuperBoost(true)
+        const interval = setInterval(() => {
+          setProgress(prevProgress => prevProgress + 1);
+        }, 21.8); // update progress every 21.8 milliseconds
+    
+        return () => clearInterval(interval);
       }, 690)
   
       //@ts-ignore
@@ -52,8 +62,11 @@ export interface BoostButtonProps {
     }
   
     const boost = async (contentTxid: string) => {
+
+      const defaultValue = 124_000
+      const defaultDifficulty = 0.025
       //@ts-ignore
-      const stag = wrapRelayx(relayone)
+      const stag = wrapRelayx(window.relayone)
   
       if (onSending) {
         onSending()
@@ -62,8 +75,9 @@ export interface BoostButtonProps {
       try {
         const boost_result: BoostBuyResult = await stag.boost.buy({
           content: contentTxid,
-          value: 124_000,
-          difficulty: 0.025,
+          value: value ? value : defaultValue,
+          difficulty: difficulty ? difficulty : defaultDifficulty,
+          tag,
         })
   
         if (onSuccess) {
@@ -76,9 +90,9 @@ export interface BoostButtonProps {
           onError(error)
         }
       }
-  
+      
       //@ts-ignore
-      relayone
+      window.relayone
         .send({
           currency: 'USD',
           amount: 0.001,
@@ -163,6 +177,9 @@ export interface BoostButtonProps {
   return (
     <>
       <div id='superBoostPopupControler' />
+      {superBoost && !boostPopupOpen && <div className="sm:hidden absolute top-0 left-0 w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+        <div className="bg-blue-600 h-2.5 rounded-full duration-4000 ease-in-out" style={{width:`${progress}%`}} ></div>
+      </div>}
       <div
         onClick={handleBoost}
         onMouseDown={handleOnMouseDown}
@@ -207,9 +224,9 @@ export interface BoostButtonProps {
           <p className='text-gray-500 dark:text-gray-300 group-hover:text-blue-500 -ml-3'>{difficulty?.toFixed(3)}</p>
         )}
       </div>
-      {/* <Drawer selector='#boostPopupControler' isOpen={boostPopupOpen} onClose={() => setBoostPopupOpen(false)}>
+      <Drawer isOpen={boostPopupOpen} onClose={() => setBoostPopupOpen(false)}>
         <SuperBoostPopup contentTxId={content} onClose={() => setBoostPopupOpen(false)} />
-      </Drawer> */}
+      </Drawer> 
     </>
   )
 }

@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.1.4",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -15,7 +15,7 @@
     "build": "tsdx build && yarn build-tailwind",
     "test": "tsdx test --passWithNoTests",
     "lint": "tsdx lint",
-    "prepare": "tsdx build",
+    "prepare": "yarn build",
     "size": "size-limit",
     "analyze": "size-limit --why",
     "storybook": "start-storybook -p 6006",
@@ -37,19 +37,22 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "boost-lib",
+  "name": "myboostpow-lib",
   "author": "Guillaume De Martino",
-  "module": "dist/boost-lib.esm.js",
+  "module": "dist/myboostpow-lib.esm.js",
   "size-limit": [
     {
-      "path": "dist/boost-lib.cjs.production.min.js",
+      "path": "dist/myboostpow-lib.cjs.production.min.js",
       "limit": "10 KB"
     },
     {
-      "path": "dist/boost-lib.esm.js",
+      "path": "dist/myboostpow-lib.esm.js",
       "limit": "10 KB"
     }
   ],
+  "dependencies": {
+    "stag-relayx": "^0.2.8"
+  },
   "devDependencies": {
     "@babel/core": "^7.20.7",
     "@size-limit/preset-small-lib": "^8.1.0",
@@ -70,7 +73,6 @@
     "react-dom": "^18.2.0",
     "react-is": "^18.2.0",
     "size-limit": "^8.1.0",
-    "stag-relayx": "^0.2.8",
     "tailwindcss": "^3.2.4",
     "tsdx": "^0.14.1",
     "tslib": "^2.4.1",

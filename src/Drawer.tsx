@@ -1,15 +1,13 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import { createPortal } from 'react-dom'
 
 interface DrawerProps {
   children: React.ReactNode
-  selector: string
   isOpen: boolean
   onClose: () => void
 }
 
-const Drawer = ({ children, selector, isOpen, onClose }: DrawerProps) => {
+const Drawer = ({ children, isOpen, onClose }: DrawerProps) => {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -30,12 +28,9 @@ const Drawer = ({ children, selector, isOpen, onClose }: DrawerProps) => {
   if (!isOpen) {
     return null
   } else {
-    const container = document.querySelector(selector)
-    if (container) {
-      return mounted ? createPortal(<DrawerLayout>{children}</DrawerLayout>, container) : null
-    } else {
-      return null
-    }
+    
+      return mounted ? <DrawerLayout>{children}</DrawerLayout> : null
+    
   }
 }
 
