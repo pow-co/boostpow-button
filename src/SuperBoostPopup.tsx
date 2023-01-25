@@ -5,23 +5,27 @@ import { BoostBuyResult } from './BoostButton'
 
 interface superBoostPopupOptions {
   contentTxId: string
+  defaultValue?:number;
+  defaultTag?: string;
   onClose: () => void
   onSending?: () => void
   onError?: (Error: Error) => void
   onSuccess?: (result: BoostBuyResult) => void
 }
 
-const SuperBoostPopup = ({ contentTxId, onClose, onSending, onError, onSuccess }: superBoostPopupOptions) => {
+const SuperBoostPopup = ({ contentTxId, defaultTag, defaultValue, onClose, onSending, onError, onSuccess }: superBoostPopupOptions) => {
   const defaultPricePerDifficulty = 2.18
-  const [difficulty, setDifficulty] = useState(0.025)
-  const [tag, setTag] = useState('')
+  const [difficulty, setDifficulty] = useState(0.00025)
+  const [tag, setTag] = useState(defaultTag || '')
   const [price, setPrice] = useState(defaultPricePerDifficulty * difficulty)
-  const [value, setValue] = useState(124_000)
+  const [value, setValue] = useState(defaultValue || 124_000)
   const [exchangeRate, setExchangeRate] = useState(100)
   const [position, setPosition] = useState(0)
 
   useEffect(() => {
-    axios.get('https://api.whatsonchain.com/v1/bsv/main/exchangerate').then((resp) => setExchangeRate(resp.data.rate))
+    axios.get('https://api.whatsonchain.com/v1/bsv/main/exchangerate').then((resp) => {
+      setExchangeRate(resp.data.rate.toFixed(2))
+    })
   },[])
 
   //difficulty hook
@@ -155,8 +159,8 @@ const SuperBoostPopup = ({ contentTxId, onClose, onSending, onError, onSuccess }
                 className='border border-gray-300 dark:border-gray-700 rounded-l-md text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 py-1 pl-2.5 text-base'
                 type='number'
                 autoFocus
-                min={0.025}
-                step={0.1}
+                min={0.00025}
+                step={0.0005}
                 value={difficulty}
                 onChange={handleChangeDifficulty}
               />

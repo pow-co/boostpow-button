@@ -1,5 +1,4 @@
-import React, { useRef, useState} from 'react'
-import { wrapRelayx } from "stag-relayx"
+import React, { useState} from 'react'
 import SuperBoostPopup from './SuperBoostPopup'
 import Drawer from './Drawer'
 
@@ -22,152 +21,18 @@ export interface BoostButtonProps {
     showDifficulty?: boolean
   }
 
-  const BoostButton = ({ content, value, difficulty, tag, showDifficulty, onSending, onSuccess, onError }: BoostButtonProps) => {
-    const [action, setAction] = useState('')
-    const [superBoost, setSuperBoost] = useState(false)
+  const BoostButton = ({ content, difficulty, tag, showDifficulty, onSending, onSuccess, onError }: BoostButtonProps) => {
     const [boostPopupOpen, setBoostPopupOpen] = useState(false)
-    const timerRef = useRef<React.RefObject<() => void>>(null)
-    const isLongPress = useRef<boolean>(false)
-    const superBoostLoading = useRef<React.RefObject<() => void>>(null)
-
   
-     function startPressTimer() {
-    isLongPress.current = false
-    setAction('')
-
-    //@ts-ignore
-    timerRef.current = setTimeout(() => {
-      isLongPress.current = true
-      setSuperBoost(true)
-      setAction('longpress')
-    }, 690)
-
-    //@ts-ignore
-    superBoostLoading.current = setTimeout(() => {
-      if (!isLongPress.current) {
-        return
-      }
-      //@ts-ignore
-      superBoostLoading.current = true
-      setAction('superBoost')
+    const handleBoost = (e: any) => {
+      e.preventDefault()
       setBoostPopupOpen(true)
-      setSuperBoost(false)
-    }, 2180)
-  }
-  
-    const boost = async (contentTxid: string) => {
-
-      const defaultValue = 124_000
-      const defaultDifficulty = 0.025
-      //@ts-ignore
-      const stag = wrapRelayx(window.relayone)
-  
-      if (onSending) {
-        onSending()
-      }
-  
-      try {
-        const boost_result: BoostBuyResult = await stag.boost.buy({
-          content: contentTxid,
-          value: value ? value : defaultValue,
-          difficulty: difficulty ? difficulty : defaultDifficulty,
-          tag,
-        })
-  
-        if (onSuccess) {
-          onSuccess(boost_result)
-        }
-        //@ts-ignore
-      } catch (error: any) {
-        console.log('stag.boost.error', error)
-        if (onError) {
-          onError(error)
-        }
-      }
       
-      //@ts-ignore
-      window.relayone
-        .send({
-          currency: 'USD',
-          amount: 0.001,
-          to: '1BZKajw1muBnFDEZMkAbE6Foscw3idzLRH', // boostpow.com revenue address
-        })
-        .then((result: any) => {
-          console.log('relayone.send.reward.result', result)
-        })
-        .catch((error: any) => {
-          console.log('relayone.send.reward.error', error)
-        })
     }
   
-    const handleBoost = async () => {
-      try {
-        console.log('handleboost', action)
-        if (action === 'click') {
-          await boost(content)
-        }
+    
   
-        if (action === 'longpress') {
-          console.log('superboost canceled')
-  
-          return
-        }
-  
-        if (action === 'superboost') {
-          console.log('superboost trigered')
-  
-          return
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-  
-    function handleOnMouseDown(e: any) {
-      e.preventDefault()
-      e.stopPropagation()
-      if (boostPopupOpen) {
-        return
-      }
-      console.log('handleOnMouseDown')
-      startPressTimer()
-      setAction('click')
-    }
-  
-    function handleOnMouseUp(e: any) {
-      e.preventDefault()
-      e.stopPropagation()
-      console.log('handleOnMouseUp')
-      setSuperBoost(false)
-      //@ts-ignore
-      clearTimeout(timerRef.current)
-      //@ts-ignore
-      clearTimeout(superBoostLoading.current)
-    }
-  
-    function handleOnTouchStart(e: any) {
-      e.preventDefault()
-      e.stopPropagation()
-      if (boostPopupOpen) {
-        return
-      }
-      console.log('handleOnTouchStart')
-      startPressTimer()
-      setAction('click')
-      handleBoost()
-    }
-  
-    function handleOnTouchEnd(e: any) {
-      e.preventDefault()
-      e.stopPropagation()
-      console.log('handleOnTouchEnd')
-      setSuperBoost(false)
-      //@ts-ignore
-      clearTimeout(timerRef.current)
-      //@ts-ignore
-      clearTimeout(superBoostLoading.current)
-    }
-
+    
   return (
     <>
       <div id='superBoostPopupControler' />
@@ -176,19 +41,8 @@ export interface BoostButtonProps {
       </div>} */}
       <div
         onClick={handleBoost}
-        onMouseDown={handleOnMouseDown}
-        onMouseUp={handleOnMouseUp}
-        onTouchStart={handleOnTouchStart}
-        onTouchEnd={handleOnTouchEnd}
         className={`justify-center flex group items-center w-fit relative select-none cursor-pointer`}
       >
-        <div
-          className={
-            superBoost && !boostPopupOpen
-              ? `absolute ${!showDifficulty ? "justify-center" : "left-[14px]"}  min-h-[42px] min-w-[42px] rounded-full border-t-4 border-green-500 animate-spin`
-              : 'hidden'
-          }
-        />
         <div
           className={`hidden group-hover:block animate-ping absolute ${
             !showDifficulty ? 'justify-center' : 'left-[18px]'
@@ -219,7 +73,13 @@ export interface BoostButtonProps {
         )}
       </div>
       <Drawer isOpen={boostPopupOpen} onClose={() => setBoostPopupOpen(false)}>
-        <SuperBoostPopup contentTxId={content} onClose={() => setBoostPopupOpen(false)} />
+        <SuperBoostPopup 
+          contentTxId={content}
+          onSending={onSending}
+          onSuccess={onSuccess}
+          onError={onError}
+          defaultTag={tag} 
+          onClose={() => setBoostPopupOpen(false)} />
       </Drawer> 
     </>
   )
