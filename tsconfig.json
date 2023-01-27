@@ -2,6 +2,7 @@
   // see https://www.typescriptlang.org/tsconfig to better understand tsconfigs
   "include": ["src", "types"],
   "compilerOptions": {
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "module": "esnext",
     "lib": ["dom", "esnext"],
     "importHelpers": true,

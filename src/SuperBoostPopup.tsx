@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import wrapRelayx from 'stag-relayx'
 import { BoostBuyResult } from './BoostButton'
+import styled from 'styled-components'
 
 interface superBoostPopupOptions {
   contentTxId: string
@@ -12,6 +13,141 @@ interface superBoostPopupOptions {
   onError?: (Error: Error) => void
   onSuccess?: (result: BoostBuyResult) => void
 }
+
+const PopupBackground = styled.div`
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  position: fixed;
+`
+
+const PopupExtContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+`
+
+const DivGrow = styled.div`
+  flex-grow: 1;
+  cursor: pointer;
+`
+
+const PopupContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 420px;
+  height: 500px;
+  border-top-left-radius: 0.5rem; 
+  border-top-right-radius: 0.5rem;
+  background-color: rgb(243 244 246);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+font-serif	font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+font-mono	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; 
+`
+
+const PopupHeader = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid rgb(209 213 219);
+`
+const PopupTitle = styled.h1`
+  margin-left: 20px;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700; 
+`
+
+const PopupBody = styled.div`
+  flex-grow: 1;
+  display: flex;
+  padding-top: 20px;
+  flex-direction: column;
+  justify-content: content;
+  align-items: center;
+`
+
+const PopupFieldLabel = styled.div`
+  background-color: rgb(243 244 246);
+  color: rgb(17 24 39);
+  border-top-right-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem; 
+  padding-right: padding-right: 0.625rem;
+`
+
+const PopupInput = styled.input`
+  border: 1px solid rgb(209 213 219);
+  border-top-left-radius: 0.375rem; 
+  border-bottom-left-radius: 0.375rem; 
+  color: rgb(17 24 39);
+  background-color: rgb(243 244 246);
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem; 
+  padding-left: padding-right: 0.625rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+`
+
+const SliderContainer = styled.div`
+  display: flex;
+  align-items: center;
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+  width: 100%
+`
+
+const SliderLabel = styled.span`
+  margin-left: 1rem; 
+  margin-right: 1rem;
+  font-size: 1.25rem; 
+  line-height: 1.75rem; 
+`
+
+
+
+const SliderInput = styled.input`
+  width: 100%;
+  height: 0.5rem;
+  background-color: rgb(229 231 235);
+  border-radius: 0.5rem; 
+  appearance: none;
+  cursor: pointer;
+`
+
+const PopupFooter = styled.div`
+  margin-bottom: 5rem;
+  @media (min-width: 640px) {
+    margin-bottom: 0rem;
+  }
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+`
+
+const PopupButton = styled.button`
+  color: white;
+  background-color: rgb(37 99 235);
+  line-height: 1.5;
+  padding: 0.5rem 2.5rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  &:hover {
+    transform: translateY(-1px);
+  }
+  &:disabled {
+    opacity: 0.5;
+  }
+
+`
 
 const SuperBoostPopup = ({ contentTxId, defaultTag, defaultValue, onClose, onSending, onError, onSuccess }: superBoostPopupOptions) => {
   const defaultPricePerDifficulty = 2.18
@@ -108,15 +244,14 @@ const SuperBoostPopup = ({ contentTxId, defaultTag, defaultValue, onClose, onSen
     setPosition(parseFloat(e.target.value))
   }
   return (
-    <div onClick={(e) => e.stopPropagation()} className='fixed inset-0'>
-      <div className='flex flex-col h-screen'>
-        <div onClick={onClose} className='grow cursor-pointer' />
-        <div className='flex'>
-          <div onClick={onClose} className='grow cursor-pointer' />
-          <div className='flex flex-col w-[420px] h-[500px] rounded-t-lg bg-gray-100 dark:bg-gray-800'>
-            <div className='flex items-center p-5 border-b border-b-gray-300 dark:border-b-gray-700'>
+    <PopupBackground onClick={(e) => e.stopPropagation()}>
+      <PopupExtContainer>
+        <DivGrow onClick={onClose} />
+        <div style={{display:"flex"}}>
+          <DivGrow onClick={onClose} />
+          <PopupContainer>
+            <PopupHeader>
               <svg
-                className=''
                 width='65'
                 height='65'
                 viewBox='0 0 65 65'
@@ -140,23 +275,21 @@ const SuperBoostPopup = ({ contentTxId, defaultTag, defaultValue, onClose, onSen
                   fill='white'
                 />
               </svg>
-              <p className='ml-5 text-2xl font-bold'>Boostpow</p>
-            </div>
-            <div className='grow flex flex-col justify-center items-center'>
-              <div className='bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-r-md py-1 pr-2.5'>
+              <PopupTitle>Boostpow</PopupTitle>
+            </PopupHeader>
+            <PopupBody>
+              <PopupFieldLabel>
                 Tag
-              </div>
-              <input
-                className='border border-gray-300 dark:border-gray-700 rounded-l-md text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 py-1 pl-2.5 text-base'
+              </PopupFieldLabel>
+              <PopupInput
                 type='text'
                 value={tag}
                 onChange={handleChangeTag}
               />
-              <div className='bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-r-md py-1 pr-2.5'>
+              <PopupFieldLabel>
                 Difficulty
-              </div>
-              <input
-                className='border border-gray-300 dark:border-gray-700 rounded-l-md text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 py-1 pl-2.5 text-base'
+              </PopupFieldLabel>
+              <PopupInput
                 type='number'
                 autoFocus
                 min={0.00025}
@@ -164,34 +297,34 @@ const SuperBoostPopup = ({ contentTxId, defaultTag, defaultValue, onClose, onSen
                 value={difficulty}
                 onChange={handleChangeDifficulty}
               />
-              <div className='bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-r-md py-1 pr-2.5'>
+              <PopupFieldLabel>
                 satoshis: {value}
-              </div>
-              <div className='flex items-center px-10 w-full'>
-                <span className='mr-4 text-xl'>🐢</span>
-                <input 
+              </PopupFieldLabel>
+              <SliderContainer>
+                <SliderLabel className='mr-4 text-xl'>🐢</SliderLabel>
+                <SliderInput 
                   type="range" 
                   min={-100} 
                   max={100} 
                   onChange={handleChangePosition} 
                   value={position} 
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"/>
-                <span className='ml-4 text-xl'>🐇</span>
-              </div>
-            </div>
-            <div className='mb-20 sm:mb-0 p-5 flex items-center text-center justify-center'>
-              <button
+                />
+                <SliderLabel className='ml-4 text-xl'>🐇</SliderLabel>
+              </SliderContainer>
+            </PopupBody>
+            <PopupFooter >
+              <PopupButton
                 onClick={handleBoost}
                 className='text-white bg-gradient-to-tr from-blue-500 to-blue-600 leading-6 py-1 px-10 font-bold border-none rounded cursor-pointer disabled:opacity-50 transition duration-500 transform hover:-translate-y-1'
               >
                 Boost ${price.toFixed(2)}
-              </button>
-            </div>
-          </div>
-          <div onClick={onClose} className='grow cursor-pointer' />
+              </PopupButton>
+            </PopupFooter>
+          </PopupContainer>
+          <DivGrow onClick={onClose}/>
         </div>
-      </div>
-    </div>
+      </PopupExtContainer>
+    </PopupBackground>
   )
 }
 
