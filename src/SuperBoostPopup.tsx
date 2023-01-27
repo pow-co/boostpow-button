@@ -8,13 +8,25 @@ interface superBoostPopupOptions {
   contentTxId: string
   defaultValue?:number;
   defaultTag?: string;
+  theme?: 'light' | 'dark'
   onClose: () => void
   onSending?: () => void
   onError?: (Error: Error) => void
   onSuccess?: (result: BoostBuyResult) => void
 }
 
-const PopupBackground = styled.div`
+
+
+const SuperBoostPopup = ({ contentTxId, defaultTag, theme, defaultValue, onClose, onSending, onError, onSuccess }: superBoostPopupOptions) => {
+  const defaultPricePerDifficulty = 2.18
+  const [difficulty, setDifficulty] = useState(0.00025)
+  const [tag, setTag] = useState(defaultTag || '')
+  const [price, setPrice] = useState(defaultPricePerDifficulty * difficulty)
+  const [value, setValue] = useState(defaultValue || 124_000)
+  const [exchangeRate, setExchangeRate] = useState(100)
+  const [position, setPosition] = useState(0)
+
+  const PopupBackground = styled.div`
   top: 0px;
   right: 0px;
   bottom: 0px;
@@ -40,7 +52,7 @@ const PopupContainer = styled.div`
   height: 500px;
   border-top-left-radius: 0.5rem; 
   border-top-right-radius: 0.5rem;
-  background-color: rgb(243 244 246);
+  ${theme === 'dark' ? "background-color: rgb(31 41 55)" : "background-color: rgb(243 244 246)"};
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 font-serif	font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 font-mono	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; 
@@ -53,6 +65,7 @@ const PopupHeader = styled.div`
   border-bottom: 1px solid rgb(209 213 219);
 `
 const PopupTitle = styled.h1`
+  ${theme === "dark" ? "color: white" : "color: rgb(17 24 39)"};
   margin-left: 20px;
   font-size: 1.5rem;
   line-height: 2rem;
@@ -69,8 +82,9 @@ const PopupBody = styled.div`
 `
 
 const PopupFieldLabel = styled.div`
-  background-color: rgb(243 244 246);
-  color: rgb(17 24 39);
+  ${theme === 'dark' ? "background-color: rgb(31 41 55)" : "background-color: rgb(243 244 246)"};
+  ${theme === "dark" ? "color: white" : "color: rgb(17 24 39)"};
+  margin: 5px;
   border-top-right-radius: 0.375rem;
   border-bottom-right-radius: 0.375rem;
   padding-top: 0.25rem;
@@ -82,8 +96,8 @@ const PopupInput = styled.input`
   border: 1px solid rgb(209 213 219);
   border-top-left-radius: 0.375rem; 
   border-bottom-left-radius: 0.375rem; 
-  color: rgb(17 24 39);
-  background-color: rgb(243 244 246);
+  ${theme === "dark" ? "color: white" : "color: rgb(17 24 39)"};
+  ${theme === 'dark' ? "background-color: rgb(31 41 55)" : "background-color: rgb(243 244 246)"};
   padding-top: 0.25rem;
   padding-bottom: 0.25rem; 
   padding-left: padding-right: 0.625rem;
@@ -148,15 +162,6 @@ const PopupButton = styled.button`
   }
 
 `
-
-const SuperBoostPopup = ({ contentTxId, defaultTag, defaultValue, onClose, onSending, onError, onSuccess }: superBoostPopupOptions) => {
-  const defaultPricePerDifficulty = 2.18
-  const [difficulty, setDifficulty] = useState(0.00025)
-  const [tag, setTag] = useState(defaultTag || '')
-  const [price, setPrice] = useState(defaultPricePerDifficulty * difficulty)
-  const [value, setValue] = useState(defaultValue || 124_000)
-  const [exchangeRate, setExchangeRate] = useState(100)
-  const [position, setPosition] = useState(0)
 
   useEffect(() => {
     axios.get('https://api.whatsonchain.com/v1/bsv/main/exchangerate').then((resp) => {

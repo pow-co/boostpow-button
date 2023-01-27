@@ -15,6 +15,7 @@ export interface BoostButtonProps {
   difficulty?: number
   tag?: string
   category?: string
+  theme?: "light" | "dark"
   onClick?: () => void
   onSending?: () => void
   onError?: (Error: Error) => void
@@ -52,6 +53,13 @@ const ButtonContainer = styled.div`
   }
 
 `
+
+const IconContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
 const LargePulse = styled.div`
   display: none;
   position: absolute;
@@ -103,7 +111,7 @@ const BoostText = styled.p`
   }
 `
 
-  const BoostButton = ({ content, difficulty, tag, showDifficulty, onSending, onSuccess, onError }: BoostButtonProps) => {
+  const BoostButton = ({ content, difficulty, theme, tag, showDifficulty, onSending, onSuccess, onError }: BoostButtonProps) => {
     const [boostPopupOpen, setBoostPopupOpen] = useState(false)
   
     const handleBoost = (e: any) => {
@@ -124,17 +132,19 @@ const BoostText = styled.p`
       <ButtonContainer
         onClick={handleBoost}
       >
-        <LargePulse className='pulse' />
-        <MediumPulse className='pulse'/>
-        <SmallPulse className='pulse'/>
-        <BoostIcon
-          viewBox='0 0 65 65'
-        >
-          <path
-            d='M40.1719 32.6561C40.1719 35.6054 38.5079 38.1645 36.0692 39.4499C35.002 40.0122 33.7855 36.2423 32.4945 36.2423C31.1288 36.2423 29.8492 40.0696 28.7418 39.4499C26.4007 38.1359 24.8228 35.5308 24.8228 32.6561C24.8228 28.4214 28.2598 24.9844 32.4945 24.9844C36.7291 24.9844 40.1719 28.4157 40.1719 32.6561Z'
-            fill='transparent'
-          ></path>
-        </BoostIcon>
+        <IconContainer>
+          <LargePulse className='pulse' />
+          <MediumPulse className='pulse'/>
+          <SmallPulse className='pulse'/>
+          <BoostIcon
+            viewBox='0 0 65 65'
+          >
+            <path
+              d='M40.1719 32.6561C40.1719 35.6054 38.5079 38.1645 36.0692 39.4499C35.002 40.0122 33.7855 36.2423 32.4945 36.2423C31.1288 36.2423 29.8492 40.0696 28.7418 39.4499C26.4007 38.1359 24.8228 35.5308 24.8228 32.6561C24.8228 28.4214 28.2598 24.9844 32.4945 24.9844C36.7291 24.9844 40.1719 28.4157 40.1719 32.6561Z'
+              fill='transparent'
+            ></path>
+          </BoostIcon>
+        </IconContainer>
         {showDifficulty && (
           <BoostText>{difficulty?.toFixed(3)}</BoostText>
         )}
@@ -144,6 +154,7 @@ const BoostText = styled.p`
           contentTxId={content}
           onSending={onSending}
           onSuccess={onSuccess}
+          theme={theme}
           onError={onError}
           defaultTag={tag} 
           onClose={() => setBoostPopupOpen(false)} />
