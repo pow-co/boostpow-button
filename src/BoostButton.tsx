@@ -116,6 +116,7 @@ const BoostText = styled.p`
   
     const handleBoost = (e: any) => {
       e.preventDefault()
+      e.stopPropagation()
       setBoostPopupOpen(true)
       
     }
