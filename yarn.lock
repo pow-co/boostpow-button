@@ -5580,7 +5580,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.2.0, axios@npm:^1.2.2":
+"axios@npm:^1.2.0":
+  version: 1.2.6
+  resolution: "axios@npm:1.2.6"
+  dependencies:
+    follow-redirects: ^1.15.0
+    form-data: ^4.0.0
+    proxy-from-env: ^1.1.0
+  checksum: cbd19be3e07d2fbb6a0b126e49880cecdd44c1f68496ae0e7d21e7dc1c31fd59703a8eec51c9fd69034344f519cc1cdc22c22153131063657c4cef50195f0c00
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.2.2":
   version: 1.2.5
   resolution: "axios@npm:1.2.5"
   dependencies:
@@ -13285,7 +13296,7 @@ __metadata:
     react-dom: ^18.2.0
     react-is: ^18.2.0
     size-limit: ^8.1.0
-    stag-relayx: ^0.2.8
+    stag-relayx: ^0.2.10
     styled-components: ^5.3.6
     tsdx: ^0.14.1
     tslib: ^2.4.1
@@ -16722,9 +16733,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stag-relayx@npm:^0.2.8":
-  version: 0.2.9
-  resolution: "stag-relayx@npm:0.2.9"
+"stag-relayx@npm:^0.2.10":
+  version: 0.2.10
+  resolution: "stag-relayx@npm:0.2.10"
   dependencies:
     "@runonbitcoin/nimble": ^1.0.14
     axios: ^1.2.0
@@ -16735,7 +16746,7 @@ __metadata:
     pbkdf2-compat: ^4.0.0
     uuid: ^9.0.0
     webpack: ^5.75.0
-  checksum: 7c7f43bf39c258ed4992adcd6602ae3d66fe550438cf7461fe1073e305cb66cceffa0da96a25d0330cf6a41dcc46709e02162d3d8b1259e6e5ffbe11a0ad3789
+  checksum: 1885b5e24a14e26d3c433ac42929fec3315f0b66af3c95bfa0b08d6252e09564ddb550aa72ab88c83bf030340706dd24a1ebdd219b2b9b4c620e9e776452808a
   languageName: node
   linkType: hard
 

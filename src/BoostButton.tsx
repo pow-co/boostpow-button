@@ -51,6 +51,9 @@ const ButtonContainer = styled.div`
     display: block;
 
   }
+  &: hover .hover_text {
+    color: rgb(59 130 246);
+  }
 
 `
 
@@ -95,7 +98,7 @@ const BoostIcon = styled.svg`
   min-height: 69px;
   min-width: 69px;
   border-radius: 50%;
-  stroke-width: 1;
+  stroke-width: 1.5;
   stroke: rgb(107 114 128);
 
   &:hover {
@@ -104,11 +107,7 @@ const BoostIcon = styled.svg`
 `
 
 const BoostText = styled.p`
-  text-color: rgb(107 114 128);
-
-  &:hover {
-    text-color: rgb(59 130 246);
-  }
+  ${(props) => props.theme === "dark" ? "color: rgb(209 213 219)":"color: rgb(107 114 128)"};
 `
 
   const BoostButton = ({ content, difficulty, theme, tag, showDifficulty, onSending, onSuccess, onError }: BoostButtonProps) => {
@@ -147,7 +146,7 @@ const BoostText = styled.p`
           </BoostIcon>
         </IconContainer>
         {showDifficulty && (
-          <BoostText>{difficulty?.toFixed(3)}</BoostText>
+          <BoostText className='hover_text'>{difficulty?.toFixed(3)}</BoostText>
         )}
       </ButtonContainer>
       <Drawer isOpen={boostPopupOpen} onClose={() => setBoostPopupOpen(false)}>

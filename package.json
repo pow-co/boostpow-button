@@ -1,5 +1,5 @@
 {
-  "version": "0.1.10",
+  "version": "0.1.11",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -51,7 +51,7 @@
   ],
   "dependencies": {
     "axios": "^1.2.2",
-    "stag-relayx": "^0.2.8",
+    "stag-relayx": "^0.2.10",
     "styled-components": "^5.3.6"
   },
   "devDependencies": {
