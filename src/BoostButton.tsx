@@ -99,7 +99,7 @@ const BoostIcon = styled.svg`
   min-width: 69px;
   border-radius: 50%;
   stroke-width: 1.5;
-  stroke: rgb(107 114 128);
+  ${(props) => props.theme === "dark" ? "stroke: rgb(209 213 219)" : "stroke: rgb(107 114 128)"};
 
   &:hover {
     stroke: rgb(59 130 246);
@@ -137,6 +137,7 @@ const BoostText = styled.p`
           <MediumPulse className='pulse'/>
           <SmallPulse className='pulse'/>
           <BoostIcon
+            theme={theme}
             viewBox='0 0 65 65'
           >
             <path
@@ -146,7 +147,7 @@ const BoostText = styled.p`
           </BoostIcon>
         </IconContainer>
         {showDifficulty && (
-          <BoostText className='hover_text'>{difficulty?.toFixed(3)}</BoostText>
+          <BoostText theme={theme} className='hover_text'>{difficulty?.toFixed(3)}</BoostText>
         )}
       </ButtonContainer>
       <Drawer isOpen={boostPopupOpen} onClose={() => setBoostPopupOpen(false)}>
