@@ -128,6 +128,7 @@ const PopupFooter = styled.div`
   }
   padding: 20px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   text-align: center;
   justify-content: center;
@@ -161,6 +162,7 @@ const SuperBoostPopup = ({ contentTxId, defaultTag, theme, defaultValue, onClose
   const [tag, setTag] = useState(defaultTag || '')
   const [price, setPrice] = useState(defaultPricePerDifficulty * difficulty)
   const [value, setValue] = useState(defaultValue || 124_000)
+  const [devFee, setDevFee] = useState(124_000 * 0.1)
   const [exchangeRate, setExchangeRate] = useState(100)
   const [position, setPosition] = useState(0)
 
@@ -174,18 +176,22 @@ const SuperBoostPopup = ({ contentTxId, defaultTag, theme, defaultValue, onClose
 
   //difficulty hook
   useEffect(() => {
-    setPrice(defaultPricePerDifficulty * difficulty)
+    setPrice(defaultPricePerDifficulty * difficulty * 1.1)
   },[difficulty])
 
   //position hook
   useEffect(() => {
-    setPrice(defaultPricePerDifficulty*difficulty + (defaultPricePerDifficulty * difficulty * position / 100))
+    setPrice(defaultPricePerDifficulty*difficulty + (defaultPricePerDifficulty * difficulty * position / 100) * 1.1)
   },[position])
 
   //price hook
   useEffect(() => {
     setValue(Math.round(price * 1e8 / exchangeRate))
   },[price])
+
+  useEffect(() => {
+    setDevFee(Math.round(value * 0.1))
+  },[value])
 
 
   const boost = async (contentTxid: string) => {
@@ -206,9 +212,9 @@ const SuperBoostPopup = ({ contentTxId, defaultTag, theme, defaultValue, onClose
       //@ts-ignore
       window.relayone
         .send({
-          currency: 'USD',
-          amount: 0.001,
-          to: '1BZKajw1muBnFDEZMkAbE6Foscw3idzLRH', // boostpow.com revenue address
+          currency: 'BSV',
+          amount: devFee * 1e-8,
+          to: '1Nw9obzfFbPeERLAmSgN82dtkQ6qssaGnU', // dev revenue address
         })
         .then((result: any) => {
           console.log('relayone.send.reward.result', result)
@@ -324,9 +330,13 @@ const SuperBoostPopup = ({ contentTxId, defaultTag, theme, defaultValue, onClose
               <PopupButton
                 onClick={handleBoost}
               >
-                Boost ${price.toFixed(2)}
+                Buy {price < 0.01 ? `Boost ${value + devFee} satoshis`: `Boost $${price.toFixed(2)}`}
               </PopupButton>
+              <PopupFieldLabel theme={theme}>
+                * developper fee: 10%
+              </PopupFieldLabel>
             </PopupFooter>
+            
           </PopupContainer>
           <DivGrow onClick={onClose}/>
         </div>
