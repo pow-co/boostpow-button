@@ -235,7 +235,12 @@ const SuperBoostPopup = ({ contentTxId, defaultTag, theme, defaultValue, onClose
   }
 
   const handleBoost = () => {
+    
     try {
+      console.log(contentTxId)
+      if(contentTxId === undefined){
+        throw new Error("Content txid is undefined")
+      }
       boost(contentTxId)
       onClose()
     } catch (error) {
