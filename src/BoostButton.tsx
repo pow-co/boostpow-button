@@ -10,17 +10,18 @@ export interface BoostBuyResult {
   }
 
 export interface BoostButtonProps {
-  content: string
-  value?: number
-  difficulty?: number
-  tag?: string
-  category?: string
-  theme?: "light" | "dark"
-  onClick?: () => void
-  onSending?: () => void
-  onError?: (Error: Error) => void
-  onSuccess?: (result: BoostBuyResult) => void
-  showDifficulty?: boolean
+  wallet: "relayx" | "twetch" | "handcash";
+  content: string;
+  value?: number;
+  difficulty?: number;
+  tag?: string;
+  category?: string;
+  theme?: "light" | "dark";
+  onClick?: () => void;
+  onSending?: () => void;
+  onError?: (Error: Error) => void;
+  onSuccess?: (result: BoostBuyResult) => void;
+  showDifficulty?: boolean;
 }
 
 const pulse = keyframes`
@@ -110,7 +111,7 @@ const BoostText = styled.p`
   ${(props) => props.theme === "dark" ? "color: rgb(209 213 219)":"color: rgb(107 114 128)"};
 `
 
-  const BoostButton = ({ content, difficulty, theme, tag, showDifficulty, onSending, onSuccess, onError }: BoostButtonProps) => {
+  const BoostButton = ({ wallet, content, difficulty, theme, tag, showDifficulty, onSending, onSuccess, onError }: BoostButtonProps) => {
     const [boostPopupOpen, setBoostPopupOpen] = useState(false)
   
     const handleBoost = (e: any) => {
@@ -151,7 +152,8 @@ const BoostText = styled.p`
         )}
       </ButtonContainer>
       <Drawer isOpen={boostPopupOpen} onClose={() => setBoostPopupOpen(false)}>
-        <SuperBoostPopup 
+        <SuperBoostPopup
+          wallet={wallet} 
           contentTxId={content}
           onSending={onSending}
           onSuccess={onSuccess}

@@ -3,16 +3,18 @@ import axios from 'axios'
 import wrapRelayx from 'stag-relayx'
 import { BoostBuyResult } from './BoostButton'
 import styled from 'styled-components'
+import TwetchWeb3 from '@twetch/web3'
 
 interface superBoostPopupOptions {
-  contentTxId: string
+  wallet: "relayx" | "twetch" | "handcash";
+  contentTxId: string;
   defaultValue?:number;
   defaultTag?: string;
-  theme?: 'light' | 'dark'
-  onClose: () => void
-  onSending?: () => void
-  onError?: (Error: Error) => void
-  onSuccess?: (result: BoostBuyResult) => void
+  theme?: 'light' | 'dark';
+  onClose: () => void;
+  onSending?: () => void;
+  onError?: (Error: Error) => void;
+  onSuccess?: (result: BoostBuyResult) => void;
 
 }
 
@@ -154,9 +156,9 @@ const PopupButton = styled.button`
 
 `
 
+const API_BASE = "https://pow.co";
 
-
-const SuperBoostPopup = ({ contentTxId, defaultTag, theme, defaultValue, onClose, onSending, onError, onSuccess }: superBoostPopupOptions) => {
+const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, defaultValue, onClose, onSending, onError, onSuccess }: superBoostPopupOptions) => {
   const defaultPricePerDifficulty = 2.18
   const [difficulty, setDifficulty] = useState(0.00025)
   const [tag, setTag] = useState(defaultTag || '')
@@ -202,35 +204,111 @@ const SuperBoostPopup = ({ contentTxId, defaultTag, theme, defaultValue, onClose
       onSending()
     }
 
-    try {
-      const boost_result: BoostBuyResult = await stag.boost.buy({
-        content: contentTxid,
-        value: value,
-        difficulty: difficulty,
-        tag: tag,
-      })
-      //@ts-ignore
-      window.relayone
-        .send({
-          currency: 'BSV',
-          amount: devFee * 1e-8,
-          to: '1Nw9obzfFbPeERLAmSgN82dtkQ6qssaGnU', // dev revenue address
-        })
-        .then((result: any) => {
-          console.log('relayone.send.reward.result', result)
-        })
-        .catch((error: any) => {
-          console.log('relayone.send.reward.error', error)
-        })
-      if (onSuccess) {
-        onSuccess(boost_result)
-      }
-      //@ts-ignore
-    } catch (error: any) {
-      console.log('stag.boost.error', error)
-      if (onError) {
-        onError(error)
-      }
+    switch (wallet){
+      case "relayx":
+        try {
+          const boost_result: BoostBuyResult = await stag.boost.buy({
+            content: contentTxid,
+            value: value,
+            difficulty: difficulty,
+            tag: tag,
+          })
+          //@ts-ignore
+          window.relayone
+            .send({
+              currency: 'BSV',
+              amount: devFee * 1e-8,
+              to: '1Nw9obzfFbPeERLAmSgN82dtkQ6qssaGnU', // dev revenue address
+            })
+            .then((result: any) => {
+              console.log('relayone.send.reward.result', result)
+            })
+            .catch((error: any) => {
+              console.log('relayone.send.reward.error', error)
+            })
+          if (onSuccess) {
+            onSuccess(boost_result)
+          }
+          //@ts-ignore
+        } catch (error: any) {
+          console.log('stag.boost.error', error)
+          if (onError) {
+            onError(error)
+          }
+        }
+        break;
+      case "twetch":
+        try {
+          var url = `${API_BASE}/api/v1/boostpow/${contentTxId}/new?difficulty=${difficulty}`
+
+          if (tag) {
+              url = `${url}&tag=${tag}`
+          }
+
+          const { data } = await axios.get(url)
+
+          const paymentRequest: PaymentRequest = data
+
+          //@ts-ignore
+          const script = Script.fromHex(paymentRequest.outputs[0].script);
+          const outputs = [{ sats: 0, args: [
+            'onchain',
+            '18pPQigu7j69ioDcUG9dACE1iAN9nCfowr', // boostpow bitcom
+            'job',
+            JSON.stringify({
+                index: 0
+            })
+          ], address: null }];
+          
+          outputs.push({
+            sats: value,
+            //@ts-ignore
+            script: script.toASM()
+          })
+
+          outputs.push({
+            sats: devFee,
+            //@ts-ignore
+            to: '1Nw9obzfFbPeERLAmSgN82dtkQ6qssaGnU', // dev revenue address
+          })
+          console.log("twetch.boost.send", outputs)
+          const twetchResponse = await TwetchWeb3.abi({
+            contract: 'payment',
+            outputs
+          })
+          console.log("twetch.boost.result", twetchResponse)
+
+          const { data: powcoJobsSubmitResultData } = await axios.post(`${API_BASE}/api/v1/boost/jobs`, {
+            transaction: twetchResponse.rawtx
+          })
+          console.log('stag.powco.jobs.submit.result.data', powcoJobsSubmitResultData)
+
+          const [job] = powcoJobsSubmitResultData.jobs
+
+          const boost_result = {
+              txid: twetchResponse.txid,
+              txhex: twetchResponse.rawtx,
+              job
+          }
+
+          console.log('boost.send.result', boost_result)
+
+          if (onSuccess) {
+            onSuccess(boost_result)
+          }
+          //@ts-ignore
+        } catch (error:any) {
+          console.log('twetch.boost.error', error)
+          if (onError) {
+            onError(error)
+          }
+        }
+        break;
+      case "handcash":
+        //TODO
+        break;
+      default:
+        console.log("no wallet selected")
     }
   }
 
