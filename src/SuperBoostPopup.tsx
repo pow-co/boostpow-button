@@ -4,6 +4,7 @@ import wrapRelayx from 'stag-relayx'
 import { BoostBuyResult } from './BoostButton'
 import styled from 'styled-components'
 import TwetchWeb3 from '@twetch/web3'
+import { Script } from '@runonbitcoin/nimble'
 
 interface superBoostPopupOptions {
   wallet: "relayx" | "twetch" | "handcash";

@@ -1,5 +1,5 @@
 {
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -50,6 +50,7 @@
     }
   ],
   "dependencies": {
+    "@runonbitcoin/nimble": "^1.0.14",
     "@twetch/web3": "https://gitlab.com/twetch/web3.git",
     "axios": "^1.2.2",
     "stag-relayx": "^0.2.10",
