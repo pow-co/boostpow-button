@@ -252,21 +252,22 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, defaultValue,
 
           //@ts-ignore
           const script = Script.fromHex(paymentRequest.outputs[0].script);
-          const outputs = [{ sats: 0, args: [
+          const outputs = [{
+            sats: value,
+            //@ts-ignore
+            script: script.toASM()
+          }];
+
+          //@ts-ignore
+          outputs.push([{ sats: 0, args: [
             'onchain',
             '18pPQigu7j69ioDcUG9dACE1iAN9nCfowr', // boostpow bitcom
             'job',
             JSON.stringify({
-                index: 1
+                index: 0
             })
-          ], address: null }];
+          ], address: null }])
           
-          outputs.push({
-            sats: value,
-            //@ts-ignore
-            script: script.toASM()
-          })
-
           outputs.push({
             sats: devFee,
             //@ts-ignore
