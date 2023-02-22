@@ -257,7 +257,7 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, defaultValue,
             '18pPQigu7j69ioDcUG9dACE1iAN9nCfowr', // boostpow bitcom
             'job',
             JSON.stringify({
-                index: 0
+                index: 1
             })
           ], address: null }];
           
