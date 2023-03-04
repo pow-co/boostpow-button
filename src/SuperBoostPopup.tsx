@@ -166,7 +166,7 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, defaultValue,
   const [price, setPrice] = useState(defaultPricePerDifficulty * difficulty)
   const [value, setValue] = useState(defaultValue || 124_000)
   const [devFee, setDevFee] = useState(124_000 * 0.1)
-  const [exchangeRate, setExchangeRate] = useState(100)
+  const [exchangeRate, setExchangeRate] = useState(0)
   const [position, setPosition] = useState(0)
 
   
@@ -184,13 +184,13 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, defaultValue,
 
   //position hook
   useEffect(() => {
-    setPrice(defaultPricePerDifficulty*difficulty + (defaultPricePerDifficulty * difficulty * position / 100) * 1.1)
+    setPrice(defaultPricePerDifficulty*difficulty + (defaultPricePerDifficulty * difficulty  + (position * defaultPricePerDifficulty * difficulty  / 100)) * 1.1)
   },[position])
 
   //price hook
   useEffect(() => {
     setValue(Math.round(price * 1e8 / exchangeRate))
-  },[price])
+  },[price, exchangeRate])
 
   useEffect(() => {
     setDevFee(Math.round(value * 0.1))
