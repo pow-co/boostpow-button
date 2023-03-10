@@ -9,7 +9,6 @@ import { Script } from '@runonbitcoin/nimble'
 interface superBoostPopupOptions {
   wallet: "relayx" | "twetch" | "handcash";
   contentTxId: string;
-  defaultValue?:number;
   defaultTag?: string;
   theme?: 'light' | 'dark';
   onClose: () => void;
@@ -159,43 +158,76 @@ const PopupButton = styled.button`
 
 const API_BASE = "https://pow.co";
 
-const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, defaultValue, onClose, onSending, onError, onSuccess }: superBoostPopupOptions) => {
-  const defaultPricePerDifficulty = 2.18
-  const [difficulty, setDifficulty] = useState(0.00025)
+const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSending, onError, onSuccess }: superBoostPopupOptions) => {
+  const absolute_min_value = 500;
+  const min_profitability = 50000;
+  const default_profitability = 500000;
+  const max_profitability = 5000000;
+  const [difficulty, setDifficulty] = useState(0.0025)
   const [tag, setTag] = useState(defaultTag || '')
-  const [price, setPrice] = useState(defaultPricePerDifficulty * difficulty)
-  const [value, setValue] = useState(defaultValue || 124_000)
-  const [devFee, setDevFee] = useState(124_000 * 0.1)
+  const [price, setPrice] = useState(0)
+  const [value, setValue] = useState(0)
+  const [devFee, setDevFee] = useState(0)
   const [exchangeRate, setExchangeRate] = useState(0)
-  const [position, setPosition] = useState(0)
+  const [minValue, setMinValue] = useState(Math.max(absolute_min_value, difficulty * min_profitability))
+  const [maxValue, setMaxValue] = useState(difficulty * max_profitability)
+  const [factor, setFactor]= useState(maxValue / minValue)
+  const [exponent, setExponent] = useState(Math.log(factor) / Math.log(minValue) + 1)
+  const [position, setPosition] = useState(Math.max(((Math.log(default_profitability * difficulty) / Math.log(minValue) - 1) / (exponent - 1)),0))
 
   
-
   useEffect(() => {
+    console.log("position",position)
     axios.get('https://api.whatsonchain.com/v1/bsv/main/exchangerate').then((resp) => {
       setExchangeRate(resp.data.rate.toFixed(2))
     })
   },[])
 
-  //difficulty hook
   useEffect(() => {
-    setPrice(defaultPricePerDifficulty * difficulty * 1.1)
+    console.log("min_value", Math.max(absolute_min_value, difficulty * min_profitability))
+    setMinValue(Math.max(absolute_min_value, difficulty * min_profitability))
+    console.log("max_value",difficulty * max_profitability )
+    setMaxValue(difficulty * max_profitability)
   },[difficulty])
 
-  //position hook
-  useEffect(() => {
-    setPrice(defaultPricePerDifficulty*difficulty + (defaultPricePerDifficulty * difficulty  + (position * defaultPricePerDifficulty * difficulty  / 100)) * 1.1)
-  },[position])
+  useEffect(()=>{
+    console.log("factor", maxValue / minValue)
+    setFactor(maxValue / minValue)
+  },[maxValue, minValue])
 
-  //price hook
   useEffect(() => {
-    setValue(Math.round(price * 1e8 / exchangeRate))
-  },[price, exchangeRate])
+    setExponent(Math.log(factor) / Math.log(minValue) + 1)
+  },[factor, minValue])
+  
+
+  useEffect(() => {
+    console.log("value", Math.pow(minValue,(position * factor)) )
+    setValue(Math.round(Math.pow(minValue, position * (exponent - 1) + 1 )))
+  },[position, minValue, exponent])
+
+  useEffect(() => {
+    setPrice(value * 1e-8 / exchangeRate)
+  }, [exchangeRate, value])
 
   useEffect(() => {
     setDevFee(Math.round(value * 0.1))
   },[value])
 
+
+  const handleChangeDifficulty = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    setDifficulty(parseFloat(e.target.value))
+    setPosition(0.5)
+  }
+  const handleChangeTag = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    setTag(e.target.value)
+  }
+
+  const handleChangePosition = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    setPosition(parseFloat(e.target.value))
+  }
 
   const boost = async (contentTxid: string) => {
     //@ts-ignore
@@ -327,20 +359,7 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, defaultValue,
     }
   }
 
-  const handleChangeDifficulty = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault()
-    setDifficulty(parseFloat(e.target.value))
-    setPosition(0)
-  }
-  const handleChangeTag = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault()
-    setTag(e.target.value)
-  }
-
-  const handleChangePosition = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault()
-    setPosition(parseFloat(e.target.value))
-  }
+  
   return (
     <PopupBackground onClick={(e) => e.stopPropagation()}>
       <PopupExtContainer>
@@ -402,8 +421,9 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, defaultValue,
                 <SliderLabel>🐢</SliderLabel>
                 <SliderInput 
                   type="range" 
-                  min={-100} 
-                  max={100} 
+                  min={0} 
+                  max={1}
+                  step={0.01} 
                   onChange={handleChangePosition} 
                   value={position} 
                 />
