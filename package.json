@@ -36,7 +36,7 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "myboostpow-lib",
+  "name": "boostpow-button",
   "author": "Guillaume De Martino",
   "module": "dist/myboostpow-lib.esm.js",
   "size-limit": [
