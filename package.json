@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -38,14 +38,14 @@
   },
   "name": "boostpow-button",
   "author": "Guillaume De Martino",
-  "module": "dist/myboostpow-lib.esm.js",
+  "module": "dist/boostpow-button.esm.js",
   "size-limit": [
     {
-      "path": "dist/myboostpow-lib.cjs.production.min.js",
+      "path": "dist/boostpow-button.cjs.production.min.js",
       "limit": "10 KB"
     },
     {
-      "path": "dist/myboostpow-lib.esm.js",
+      "path": "dist/boostpow-button.esm.js",
       "limit": "10 KB"
     }
   ],
