@@ -180,6 +180,7 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
     console.log("position",position)
     axios.get('https://api.whatsonchain.com/v1/bsv/main/exchangerate').then((resp) => {
       setExchangeRate(resp.data.rate.toFixed(2))
+      console.log("exchange rate", resp.data.rate.toFixed(2))
     })
   },[])
 
@@ -206,7 +207,8 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
   },[position, minValue, exponent])
 
   useEffect(() => {
-    setPrice(value * 1e-8 / exchangeRate)
+    console.log(value,"price",value * 1e-8 * exchangeRate)
+    setPrice(value * 1e-8 * exchangeRate)
   }, [exchangeRate, value])
 
   useEffect(() => {
