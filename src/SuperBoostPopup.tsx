@@ -5,6 +5,7 @@ import { BoostBuyResult } from './BoostButton'
 import styled from 'styled-components'
 import TwetchWeb3 from '@twetch/web3'
 import { Script } from '@runonbitcoin/nimble'
+import { AxiosResponse } from 'axios'
 
 interface superBoostPopupOptions {
   wallet: "relayx" | "twetch" | "handcash";
@@ -178,7 +179,7 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
   
   useEffect(() => {
     console.log("position",position)
-    axios.get('https://api.whatsonchain.com/v1/bsv/main/exchangerate').then((resp) => {
+    axios.get('https://api.whatsonchain.com/v1/bsv/main/exchangerate').then((resp:AxiosResponse) => {
       setExchangeRate(resp.data.rate.toFixed(2))
       console.log("exchange rate", resp.data.rate.toFixed(2))
     })
