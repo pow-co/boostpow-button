@@ -20,7 +20,8 @@
     "analyze": "size-limit --why",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "commit": "cz"
   },
   "peerDependencies": {
     "react": ">=16",
