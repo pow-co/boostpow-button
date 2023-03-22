@@ -6684,6 +6684,7 @@ __metadata:
     autoprefixer: ^10.4.13
     axios: ^1.2.2
     babel-loader: ^9.1.0
+    boostpow-js: ^1.2.22
     husky: ^8.0.2
     postcss: ^8.4.20
     react: ^18.2.0
@@ -6701,6 +6702,20 @@ __metadata:
     react-dom: ">=16"
   languageName: unknown
   linkType: soft
+
+"boostpow-js@npm:^1.2.22":
+  version: 1.2.22
+  resolution: "boostpow-js@npm:1.2.22"
+  dependencies:
+    "@types/node": ^13.7.7
+    axios: ^0.18.0
+    crypto-random-string: ^3.1.0
+    i: ^0.3.6
+    mattercloudjs: ^1.0.12
+    randombytes: ^2.1.0
+  checksum: 45703ccec47f80c974c2929ea61d78ace85d2067aab029d554420d727c52de2f55d96128b4c59e951e1f3492da62a5bb13ed08ce02a12815a77062ea899d2f86
+  languageName: node
+  linkType: hard
 
 "boostpow@npm:^1.8.1":
   version: 1.8.1

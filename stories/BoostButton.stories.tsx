@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect} from 'react';
 import { Meta, Story } from '@storybook/react';
 import BoostButton, { BoostButtonProps } from '../src/BoostButton';
 
@@ -24,9 +24,13 @@ const meta: Meta = {
   },
 };
 
+
+
 export default meta;
 
-const Template: Story<BoostButtonProps> = args => <BoostButton theme="light" showDifficulty difficulty={100}  value={124_000} {...args} />;
+const Template: Story<BoostButtonProps> = args => 
+<BoostButton theme="light" wallet='twetch' content='114dba7cfe93023c166e6cad44f2ddf5aa7619828d81b4fa64e3fce3aec9eb04' showDifficulty difficulty={100}  value={124_000} {...args} />
+;
 
 // By passing using the Args format for exported stories, you can control the props for a component for reuse in a test
 // https://storybook.js.org/docs/react/workflows/unit-testing

@@ -54,6 +54,7 @@
     "@runonbitcoin/nimble": "^1.0.14",
     "@twetch/web3": "https://gitlab.com/twetch/web3.git",
     "axios": "^1.2.2",
+    "boostpow-js": "^1.2.22",
     "stag-relayx": "^0.2.10",
     "styled-components": "^5.3.6"
   },

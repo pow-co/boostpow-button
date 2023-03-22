@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
+import { BoostPowJob } from 'boostpow-js'
 import wrapRelayx from 'stag-relayx'
 import { BoostBuyResult } from './BoostButton'
 import styled from 'styled-components'
 import TwetchWeb3 from '@twetch/web3'
-import { Script } from '@runonbitcoin/nimble'
 import { AxiosResponse } from 'axios'
 
 interface superBoostPopupOptions {
@@ -157,6 +157,21 @@ const PopupButton = styled.button`
 
 `
 
+const CheckboxWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 10px
+`;
+
+const CheckboxLabel = styled.label`
+  margin-left: 10px;
+`;
+
+const CheckboxInput = styled.input`
+  margin: 0;
+  margin-right: 10px;
+`;
+
 const API_BASE = "https://pow.co";
 
 const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSending, onError, onSuccess }: superBoostPopupOptions) => {
@@ -175,6 +190,11 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
   const [factor, setFactor]= useState(maxValue / minValue)
   const [exponent, setExponent] = useState(Math.log(factor) / Math.log(minValue) + 1)
   const [position, setPosition] = useState(Math.max(((Math.log(default_profitability * difficulty) / Math.log(minValue) - 1) / (exponent - 1)),0))
+  const [isChecked, setIsChecked] = useState(true);
+
+  const handleCheckboxChange = () => {
+    setIsChecked(!isChecked);
+  };
 
   
   useEffect(() => {
@@ -233,17 +253,82 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
   }
 
   const boost = async (contentTxid: string) => {
-    //@ts-ignore
-    const stag = wrapRelayx(window.relayone)
-
+    
     if (onSending) {
       onSending()
     }
-
+    
+    const newJob = BoostPowJob.fromObject({
+      content: contentTxid,
+      diff: difficulty,
+      category:'',
+      //userNonce: isChecked ? Buffer.from(Math.floor(Math.random() * 999999999).toString(), 'utf8').toString('hex') : '',
+      tag: tag ? Buffer.from(tag, 'utf8').toString('hex') : ''
+    })
+    
+    
     switch (wallet){
       case "relayx":
         try {
-          const boost_result: BoostBuyResult = await stag.boost.buy({
+          //@ts-ignore
+          const stag = wrapRelayx(window.relayone)
+          if (isChecked){
+            const token = await stag.relayone.authBeta();
+            const [payload] = token.split(".");
+            const data = JSON.parse(atob(payload)); // Buffer.from(payload, 'base64')
+            let paymail = data.paymail
+            let pubkey = data.pubkey
+            console.log("identity: ", { paymail, pubkey })
+            newJob['additionalData'] = Buffer.from(`{
+              identity {
+                paymail: "${paymail}",
+                publicKey: "${pubkey}"
+              }
+            }`, 'utf-8').toString("hex")
+          }
+
+          console.log("NEWJOB",newJob)
+          const outputs = [{
+            opReturn: [
+              'onchain',
+              '18pPQigu7j69ioDcUG9dACE1iAN9nCfowr', // boostpow bitcom
+              'job',
+              JSON.stringify({
+                  index: 0
+              })
+            ],
+            to: newJob.toASM(),
+            amount: value * 1e-8,
+            currency: "BSV"
+          }]
+          //@ts-ignore
+          outputs.push({
+            currency: 'BSV',
+            amount: devFee * 1e-8,
+            to: '1Nw9obzfFbPeERLAmSgN82dtkQ6qssaGnU', // dev revenue address
+          })
+          //@ts-ignore
+          const relayResponse = await window.relayone.send(outputs)
+
+          console.log("relayx.boost.response", relayResponse)
+
+          const { data: powcoJobsSubmitResultData } = await axios.post(`${API_BASE}/api/v1/boost/jobs`, {
+            transaction: relayResponse.rawTx
+          })
+          console.log('stag.powco.jobs.submit.result.data', powcoJobsSubmitResultData)
+
+          const [job] = powcoJobsSubmitResultData.jobs
+
+          const boost_result = {
+              txid: relayResponse.txid,
+              txhex: relayResponse.rawTx,
+              job
+          }
+
+          console.log('boost.send.result', boost_result)
+
+
+          /* const boost_result: BoostBuyResult = await stag.boost.buy({
             content: contentTxid,
             value: value,
             difficulty: difficulty,
@@ -261,7 +346,7 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
             })
             .catch((error: any) => {
               console.log('relayone.send.reward.error', error)
-            })
+            }) */
           if (onSuccess) {
             onSuccess(boost_result)
           }
@@ -275,7 +360,21 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
         break;
       case "twetch":
         try {
-          var url = `${API_BASE}/api/v1/boostpow/${contentTxId}/new?difficulty=${difficulty}`
+          if (isChecked){
+            let resp = await TwetchWeb3.connect()
+            let paymail = resp.paymail.toString()
+            let pubkey = resp.publicKey.toString()
+            console.log("identity: ", { paymail, pubkey })
+            newJob['additionalData'] = Buffer.from(`{
+              identity {
+                paymail: "${paymail}",
+                publicKey: "${pubkey}"
+              }
+            }`, 'utf-8').toString("hex")
+          }
+        
+          console.log("NEWJOB",newJob)
+          /* var url = `${API_BASE}/api/v1/boostpow/${contentTxId}/new?difficulty=${difficulty}`
 
           if (tag) {
               url = `${url}&tag=${tag}`
@@ -286,10 +385,10 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
           const paymentRequest: PaymentRequest = data
 
           //@ts-ignore
-          const script = Script.fromHex(paymentRequest.outputs[0].script);
+          const script = Script.fromHex(paymentRequest.outputs[0].script); */
           const outputs = [{
             sats: value,
-            script: script.toASM()
+            script: newJob.toASM()
           }];
 
           //@ts-ignore
@@ -348,14 +447,14 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
     }
   }
 
-  const handleBoost = () => {
+  const handleBoost = async () => {
     
     try {
       console.log(contentTxId)
       if(contentTxId === undefined){
         throw new Error("Content txid is undefined")
       }
-      boost(contentTxId)
+      await boost(contentTxId)
       onClose()
     } catch (error) {
       console.log(error)
@@ -432,6 +531,12 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
                 />
                 <SliderLabel>🐇</SliderLabel>
               </SliderContainer>
+
+              <CheckboxWrapper>
+                <CheckboxInput type="checkbox" checked={isChecked} onChange={handleCheckboxChange} />
+                <CheckboxLabel>Sign with Paymail?</CheckboxLabel>
+              </CheckboxWrapper>
+
             </PopupBody>
             <PopupFooter >
               <PopupButton
@@ -443,7 +548,6 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
                 * developper fee: 10%
               </PopupFieldLabel>
             </PopupFooter>
-            
           </PopupContainer>
           <DivGrow onClick={onClose}/>
         </div>
