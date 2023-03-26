@@ -544,9 +544,6 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
               >
                 Buy {price < 0.01 ? `Boost ${value + devFee} satoshis`: `Boost $${price.toFixed(2)}`}
               </PopupButton>
-              <PopupFieldLabel theme={theme}>
-                * developper fee: 10%
-              </PopupFieldLabel>
             </PopupFooter>
           </PopupContainer>
           <DivGrow onClick={onClose}/>

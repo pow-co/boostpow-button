@@ -1060,7 +1060,10 @@
 "@esbuild/darwin-x64@0.17.12":
   "version" "0.17.12"
 
-"@gar/promisify@^1.0.1", "@gar/promisify@^1.1.3":
+"@gar/promisify@^1.0.1":
+  "version" "1.1.3"
+
+"@gar/promisify@^1.1.3":
   "version" "1.1.3"
 
 "@hypnosphi/create-react-context@^0.3.1":
@@ -3192,7 +3195,7 @@
 "abab@^2.0.0":
   "version" "2.0.6"
 
-"abbrev@^1.0.0", "abbrev@~1.1.1":
+"abbrev@^1.0.0", "abbrev@~1.1.1", "abbrev@1":
   "version" "1.1.1"
 
 "accepts@~1.3.5", "accepts@~1.3.8":
@@ -3262,10 +3265,10 @@
     "debug" "4"
 
 "agentkeepalive@^4.2.1":
-  "version" "4.3.0"
+  "version" "4.2.1"
   dependencies:
     "debug" "^4.1.0"
-    "depd" "^2.0.0"
+    "depd" "^1.1.2"
     "humanize-ms" "^1.2.1"
 
 "aggregate-error@^3.0.0":
@@ -3569,7 +3572,10 @@
 "arrify@^2.0.1":
   "version" "2.0.1"
 
-"asap@^2.0.0", "asap@~2.0.3":
+"asap@^2.0.0":
+  "version" "2.0.6"
+
+"asap@~2.0.3":
   "version" "2.0.6"
 
 "asn1.js@^5.2.0":
@@ -3928,7 +3934,10 @@
   "resolved" "https://registry.npmjs.org/binary-extensions/-/binary-extensions-1.13.1.tgz"
   "version" "1.13.1"
 
-"binary-extensions@^2.0.0", "binary-extensions@^2.2.0":
+"binary-extensions@^2.0.0":
+  "version" "2.2.0"
+
+"binary-extensions@^2.2.0":
   "version" "2.2.0"
 
 "bindings@^1.5.0":
@@ -4463,21 +4472,9 @@
     "ansi-styles" "^4.1.0"
     "supports-color" "^7.1.0"
 
-"chalk@^4.0.0":
-  "version" "4.1.2"
-  dependencies:
-    "ansi-styles" "^4.1.0"
-    "supports-color" "^7.1.0"
-
-"chalk@^4.1.0", "chalk@^4.1.1":
+"chalk@^4.0.0", "chalk@^4.1.0", "chalk@^4.1.2":
   "integrity" "sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA=="
   "resolved" "https://registry.npmjs.org/chalk/-/chalk-4.1.2.tgz"
-  "version" "4.1.2"
-  dependencies:
-    "ansi-styles" "^4.1.0"
-    "supports-color" "^7.1.0"
-
-"chalk@^4.1.2":
   "version" "4.1.2"
   dependencies:
     "ansi-styles" "^4.1.0"
@@ -4604,8 +4601,15 @@
 "cli-spinners@^2.2.0", "cli-spinners@^2.5.0":
   "version" "2.7.0"
 
-"cli-table3@^0.6.1", "cli-table3@^0.6.2":
+"cli-table3@^0.6.1":
   "version" "0.6.3"
+  dependencies:
+    "string-width" "^4.2.0"
+  optionalDependencies:
+    "@colors/colors" "1.5.0"
+
+"cli-table3@^0.6.2":
+  "version" "0.6.2"
   dependencies:
     "string-width" "^4.2.0"
   optionalDependencies:
@@ -4688,7 +4692,10 @@
 "color-name@1.1.3":
   "version" "1.1.3"
 
-"color-support@^1.1.2", "color-support@^1.1.3":
+"color-support@^1.1.2":
+  "version" "1.1.3"
+
+"color-support@^1.1.3":
   "version" "1.1.3"
 
 "columnify@^1.6.0":
@@ -5291,7 +5298,10 @@
 "delegates@^1.0.0":
   "version" "1.0.0"
 
-"depd@^2.0.0", "depd@2.0.0":
+"depd@^1.1.2":
+  "version" "1.1.2"
+
+"depd@2.0.0":
   "version" "2.0.0"
 
 "deprecation@^2.0.0", "deprecation@^2.3.1":
@@ -5502,7 +5512,12 @@
 "encodeurl@~1.0.2":
   "version" "1.0.2"
 
-"encoding@^0.1.0", "encoding@^0.1.11", "encoding@^0.1.13":
+"encoding@^0.1.0", "encoding@^0.1.11":
+  "version" "0.1.13"
+  dependencies:
+    "iconv-lite" "^0.6.2"
+
+"encoding@^0.1.13":
   "version" "0.1.13"
   dependencies:
     "iconv-lite" "^0.6.2"
@@ -6172,7 +6187,7 @@
   "version" "2.0.6"
 
 "fastest-levenshtein@^1.0.12":
-  "version" "1.0.16"
+  "version" "1.0.12"
 
 "fastq@^1.6.0":
   "version" "1.15.0"
@@ -6700,7 +6715,7 @@
     "path-is-absolute" "^1.0.0"
 
 "glob@^8.0.1":
-  "version" "8.1.0"
+  "version" "8.0.3"
   dependencies:
     "fs.realpath" "^1.0.0"
     "inflight" "^1.0.4"
@@ -6792,8 +6807,11 @@
   dependencies:
     "get-intrinsic" "^1.1.3"
 
-"graceful-fs@^4.1.11", "graceful-fs@^4.1.15", "graceful-fs@^4.1.2", "graceful-fs@^4.1.6", "graceful-fs@^4.2.0", "graceful-fs@^4.2.10", "graceful-fs@^4.2.4", "graceful-fs@^4.2.6", "graceful-fs@^4.2.9":
+"graceful-fs@^4.1.11", "graceful-fs@^4.1.15", "graceful-fs@^4.1.2", "graceful-fs@^4.1.6", "graceful-fs@^4.2.0", "graceful-fs@^4.2.4", "graceful-fs@^4.2.9":
   "version" "4.2.11"
+
+"graceful-fs@^4.2.10", "graceful-fs@^4.2.6":
+  "version" "4.2.10"
 
 "graceful-fs@4.2.10":
   "version" "4.2.10"
@@ -7389,8 +7407,13 @@
   dependencies:
     "cidr-regex" "^3.1.1"
 
-"is-core-module@^2.11.0", "is-core-module@^2.5.0", "is-core-module@^2.8.1", "is-core-module@^2.9.0":
+"is-core-module@^2.11.0", "is-core-module@^2.5.0", "is-core-module@^2.9.0":
   "version" "2.11.0"
+  dependencies:
+    "has" "^1.0.3"
+
+"is-core-module@^2.8.1":
+  "version" "2.10.0"
   dependencies:
     "has" "^1.0.3"
 
@@ -8259,7 +8282,10 @@
   optionalDependencies:
     "graceful-fs" "^4.1.6"
 
-"jsonparse@^1.2.0", "jsonparse@^1.3.1":
+"jsonparse@^1.2.0":
+  "version" "1.3.1"
+
+"jsonparse@^1.3.1":
   "version" "1.3.1"
 
 "JSONStream@^1.0.4":
@@ -8286,10 +8312,10 @@
   "version" "3.1.0"
 
 "just-diff-apply@^5.2.0":
-  "version" "5.5.0"
+  "version" "5.4.1"
 
 "just-diff@^5.0.1":
-  "version" "5.2.0"
+  "version" "5.1.1"
 
 "kind-of@^3.0.2":
   "version" "3.2.2"
@@ -8637,7 +8663,10 @@
   dependencies:
     "yallist" "^4.0.0"
 
-"lru-cache@^7.4.4", "lru-cache@^7.5.1", "lru-cache@^7.7.1":
+"lru-cache@^7.4.4", "lru-cache@^7.7.1":
+  "version" "7.13.2"
+
+"lru-cache@^7.5.1":
   "version" "7.18.3"
 
 "magic-string@^0.25.2", "magic-string@^0.25.7":
@@ -8929,7 +8958,7 @@
     "brace-expansion" "^1.1.7"
 
 "minimatch@^5.0.1", "minimatch@^5.1.0":
-  "version" "5.1.6"
+  "version" "5.1.0"
   dependencies:
     "brace-expansion" "^2.0.1"
 
@@ -8954,7 +8983,7 @@
     "minipass" "^3.0.0"
 
 "minipass-fetch@^2.0.3":
-  "version" "2.1.2"
+  "version" "2.1.1"
   dependencies:
     "minipass" "^3.1.6"
     "minipass-sized" "^1.0.3"
@@ -8973,7 +9002,12 @@
     "jsonparse" "^1.3.1"
     "minipass" "^3.0.0"
 
-"minipass-pipeline@^1.2.2", "minipass-pipeline@^1.2.4":
+"minipass-pipeline@^1.2.2":
+  "version" "1.2.4"
+  dependencies:
+    "minipass" "^3.0.0"
+
+"minipass-pipeline@^1.2.4":
   "version" "1.2.4"
   dependencies:
     "minipass" "^3.0.0"
@@ -8983,8 +9017,13 @@
   dependencies:
     "minipass" "^3.0.0"
 
-"minipass@^3.0.0", "minipass@^3.1.1", "minipass@^3.1.6":
+"minipass@^3.0.0", "minipass@^3.1.1":
   "version" "3.3.6"
+  dependencies:
+    "yallist" "^4.0.0"
+
+"minipass@^3.1.6":
+  "version" "3.3.4"
   dependencies:
     "yallist" "^4.0.0"
 
@@ -9059,7 +9098,10 @@
 "mri@^1.1.0":
   "version" "1.2.0"
 
-"ms@^2.0.0", "ms@^2.1.1", "ms@^2.1.2", "ms@2.1.3":
+"ms@^2.0.0", "ms@^2.1.2":
+  "version" "2.1.3"
+
+"ms@^2.1.1", "ms@2.1.3":
   "version" "2.1.3"
 
 "ms@2.0.0":
@@ -9071,7 +9113,10 @@
 "ms@2.1.2":
   "version" "2.1.2"
 
-"mute-stream@~0.0.4", "mute-stream@0.0.8":
+"mute-stream@~0.0.4":
+  "version" "0.0.8"
+
+"mute-stream@0.0.8":
   "version" "0.0.8"
 
 "nan@^2.12.1":
@@ -9105,7 +9150,10 @@
 "natural-compare@^1.4.0":
   "version" "1.4.0"
 
-"negotiator@^0.6.3", "negotiator@0.6.3":
+"negotiator@^0.6.3":
+  "version" "0.6.3"
+
+"negotiator@0.6.3":
   "version" "0.6.3"
 
 "neo-async@^2.5.0", "neo-async@^2.6.0", "neo-async@^2.6.1", "neo-async@^2.6.2":
@@ -9151,13 +9199,13 @@
     "whatwg-url" "^5.0.0"
 
 "node-gyp@^9.0.0", "node-gyp@^9.1.0":
-  "version" "9.3.1"
+  "version" "9.1.0"
   dependencies:
     "env-paths" "^2.2.0"
     "glob" "^7.1.4"
     "graceful-fs" "^4.2.6"
     "make-fetch-happen" "^10.0.3"
-    "nopt" "^6.0.0"
+    "nopt" "^5.0.0"
     "npmlog" "^6.0.0"
     "rimraf" "^3.0.2"
     "semver" "^7.3.5"
@@ -9235,6 +9283,11 @@
 
 "node-releases@^2.0.8":
   "version" "2.0.10"
+
+"nopt@^5.0.0":
+  "version" "5.0.0"
+  dependencies:
+    "abbrev" "1"
 
 "nopt@^6.0.0":
   "version" "6.0.0"
@@ -9316,7 +9369,7 @@
   "version" "2.0.0"
 
 "npm-package-arg@^9.0.0", "npm-package-arg@^9.0.1", "npm-package-arg@^9.1.0":
-  "version" "9.1.2"
+  "version" "9.1.0"
   dependencies:
     "hosted-git-info" "^5.0.0"
     "proc-log" "^2.0.1"
@@ -10089,8 +10142,14 @@
     "icss-utils" "^4.0.0"
     "postcss" "^7.0.6"
 
-"postcss-selector-parser@^6.0.0", "postcss-selector-parser@^6.0.10", "postcss-selector-parser@^6.0.2":
+"postcss-selector-parser@^6.0.0", "postcss-selector-parser@^6.0.2":
   "version" "6.0.11"
+  dependencies:
+    "cssesc" "^3.0.0"
+    "util-deprecate" "^1.0.2"
+
+"postcss-selector-parser@^6.0.10":
+  "version" "6.0.10"
   dependencies:
     "cssesc" "^3.0.0"
     "util-deprecate" "^1.0.2"
@@ -10542,7 +10601,7 @@
     "prop-types" "^15.6.2"
 
 "read-cmd-shim@^3.0.0":
-  "version" "3.0.1"
+  "version" "3.0.0"
 
 "read-package-json-fast@^2.0.2", "read-package-json-fast@^2.0.3":
   "version" "2.0.3"
@@ -11229,7 +11288,12 @@
 "semver@^6.3.0":
   "version" "6.3.0"
 
-"semver@^7.0.0", "semver@^7.1.1", "semver@^7.1.2", "semver@^7.3.2", "semver@^7.3.4", "semver@^7.3.5", "semver@^7.3.7", "semver@7.3.8":
+"semver@^7.0.0", "semver@^7.3.7":
+  "version" "7.3.7"
+  dependencies:
+    "lru-cache" "^6.0.0"
+
+"semver@^7.1.1", "semver@^7.1.2", "semver@^7.3.2", "semver@^7.3.4", "semver@^7.3.5", "semver@7.3.8":
   "version" "7.3.8"
   dependencies:
     "lru-cache" "^6.0.0"
@@ -11445,7 +11509,7 @@
     "socks" "^2.6.2"
 
 "socks@^2.6.2":
-  "version" "2.7.1"
+  "version" "2.7.0"
   dependencies:
     "ip" "^2.0.0"
     "smart-buffer" "^4.2.0"
@@ -11924,12 +11988,22 @@
 "tapable@^2.2.0":
   "version" "2.2.1"
 
-"tar@^6.0.2", "tar@^6.1.0", "tar@^6.1.11", "tar@^6.1.2":
+"tar@^6.0.2":
   "version" "6.1.13"
   dependencies:
     "chownr" "^2.0.0"
     "fs-minipass" "^2.0.0"
     "minipass" "^4.0.0"
+    "minizlib" "^2.1.1"
+    "mkdirp" "^1.0.3"
+    "yallist" "^4.0.0"
+
+"tar@^6.1.0", "tar@^6.1.11", "tar@^6.1.2":
+  "version" "6.1.11"
+  dependencies:
+    "chownr" "^2.0.0"
+    "fs-minipass" "^2.0.0"
+    "minipass" "^3.0.0"
     "minizlib" "^2.1.1"
     "mkdirp" "^1.0.3"
     "yallist" "^4.0.0"
@@ -12050,7 +12124,10 @@
 "text-extensions@^1.0.0":
   "version" "1.9.0"
 
-"text-table@^0.2.0", "text-table@~0.2.0":
+"text-table@^0.2.0":
+  "version" "0.2.0"
+
+"text-table@~0.2.0":
   "version" "0.2.0"
 
 "throat@^5.0.0":
@@ -12654,7 +12731,13 @@
     "@types/istanbul-lib-coverage" "^2.0.1"
     "convert-source-map" "^1.6.0"
 
-"validate-npm-package-license@^3.0.1", "validate-npm-package-license@^3.0.4":
+"validate-npm-package-license@^3.0.1":
+  "version" "3.0.4"
+  dependencies:
+    "spdx-correct" "^3.0.0"
+    "spdx-expression-parse" "^3.0.0"
+
+"validate-npm-package-license@^3.0.4":
   "version" "3.0.4"
   dependencies:
     "spdx-correct" "^3.0.0"
@@ -12744,7 +12827,12 @@
     "glob-to-regexp" "^0.4.1"
     "graceful-fs" "^4.1.2"
 
-"wcwidth@^1.0.0", "wcwidth@^1.0.1":
+"wcwidth@^1.0.0":
+  "version" "1.0.1"
+  dependencies:
+    "defaults" "^1.0.3"
+
+"wcwidth@^1.0.1":
   "version" "1.0.1"
   dependencies:
     "defaults" "^1.0.3"
@@ -12936,7 +13024,12 @@
   dependencies:
     "isexe" "^2.0.0"
 
-"wide-align@^1.1.2", "wide-align@^1.1.5":
+"wide-align@^1.1.2":
+  "version" "1.1.5"
+  dependencies:
+    "string-width" "^1.0.2 || 2 || 3 || 4"
+
+"wide-align@^1.1.5":
   "version" "1.1.5"
   dependencies:
     "string-width" "^1.0.2 || 2 || 3 || 4"
