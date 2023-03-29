@@ -277,7 +277,7 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
             const [payload] = token.split(".");
             const data = JSON.parse(atob(payload)); // Buffer.from(payload, 'base64')
             let paymail = data.paymail
-            let pubkey = data.pubkey
+            let pubkey = data.pubkey 
             console.log("identity: ", { paymail, pubkey })
             newJob['additionalData'] = Buffer.from(`{
               identity {
@@ -307,8 +307,10 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
             amount: devFee * 1e-8,
             to: '1Nw9obzfFbPeERLAmSgN82dtkQ6qssaGnU', // dev revenue address
           })
+
+          console.log(outputs)
           //@ts-ignore
-          const relayResponse = await window.relayone.send(outputs)
+          const relayResponse = await window.relayone.send({outputs})
 
           console.log("relayx.boost.response", relayResponse)
 
