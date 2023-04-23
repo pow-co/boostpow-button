@@ -176,7 +176,7 @@ const API_BASE = "https://pow.co";
 
 const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSending, onError, onSuccess }: superBoostPopupOptions) => {
   const absolute_min_value = 500;
-  const min_profitability = 50000;
+  const min_profitability = 1;
   const default_profitability = 500000;
   const max_profitability = 5000000;
   const [difficulty, setDifficulty] = useState(0.0025)
