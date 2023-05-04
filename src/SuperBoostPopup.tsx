@@ -263,9 +263,8 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
       diff: difficulty,
       category:'',
       //userNonce: isChecked ? Buffer.from(Math.floor(Math.random() * 999999999).toString(), 'utf8').toString('hex') : '',
-      tag: tag ? Buffer.from(tag, 'utf8').toString('hex') : ''
+      tag: tag ? Buffer.from(tag, 'utf8').reverse().toString('hex') : ''
     })
-    
     
     switch (wallet){
       case "relayx":
