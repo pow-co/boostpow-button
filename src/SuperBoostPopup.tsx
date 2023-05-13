@@ -263,7 +263,7 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
     }
 
     if (tag) {
-      jobParams['tag'] = Buffer.from(tag, 'utf8').toString('hex')
+      jobParams['tag'] = tag
     }
     
     switch (wallet){
