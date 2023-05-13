@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { BoostPowJob } from 'boostpow-js'
 import wrapRelayx from 'stag-relayx'
 import { BoostBuyResult } from './BoostButton'
 import styled from 'styled-components'
@@ -257,14 +256,15 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
     if (onSending) {
       onSending()
     }
-    
-    const newJob = BoostPowJob.fromObject({
+
+    var jobParams: any = {
       content: contentTxid,
-      diff: difficulty,
-      category:'',
-      //userNonce: isChecked ? Buffer.from(Math.floor(Math.random() * 999999999).toString(), 'utf8').toString('hex') : '',
-      tag: tag ? Buffer.from(tag, 'utf8').reverse().toString('hex') : ''
-    })
+      difficulty
+    }
+
+    if (tag) {
+      jobParams['tag'] = Buffer.from(tag, 'utf8').toString('hex')
+    }
     
     switch (wallet){
       case "relayx":
@@ -278,7 +278,7 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
             let paymail = data.paymail
             let pubkey = data.pubkey 
             console.log("identity: ", { paymail, pubkey })
-            newJob['additionalData'] = Buffer.from(`{
+            jobParams['additionalData'] = Buffer.from(`{
               identity {
                 paymail: "${paymail}",
                 publicKey: "${pubkey}"
@@ -286,17 +286,11 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
             }`, 'utf-8').toString("hex")
           }
 
-          console.log("NEWJOB",newJob)
+	
+	  const { data } = await axios.post('https://pow.co/api/v1/boost/scripts', jobParams)
+
           const outputs = [{
-            opReturn: [
-              'onchain',
-              '18pPQigu7j69ioDcUG9dACE1iAN9nCfowr', // boostpow bitcom
-              'job',
-              JSON.stringify({
-                  index: 0
-              })
-            ],
-            to: newJob.toASM(),
+            to: data.script.asm,
             amount: value * 1e-8,
             currency: "BSV"
           }]
@@ -353,61 +347,43 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
           }
           //@ts-ignore
         } catch (error: any) {
-          console.log('stag.boost.error', error)
+          console.log('boost.error', error)
           if (onError) {
             onError(error)
           }
         }
         break;
       case "twetch":
+
         try {
           if (isChecked){
             let resp = await TwetchWeb3.connect()
             let paymail = resp.paymail.toString()
             let pubkey = resp.publicKey.toString()
             console.log("identity: ", { paymail, pubkey })
-            newJob['additionalData'] = Buffer.from(`{
+            jobParams['additionalData'] = Buffer.from(`{
               identity {
                 paymail: "${paymail}",
                 publicKey: "${pubkey}"
               }
             }`, 'utf-8').toString("hex")
           }
+
+	  const { data } = await axios.post('https://pow.co/api/v1/boost/scripts', jobParams)
         
-          console.log("NEWJOB",newJob)
-          /* var url = `${API_BASE}/api/v1/boostpow/${contentTxId}/new?difficulty=${difficulty}`
-
-          if (tag) {
-              url = `${url}&tag=${tag}`
-          }
-
-          const { data } = await axios.get(url)
-
-          const paymentRequest: PaymentRequest = data
-
-          //@ts-ignore
-          const script = Script.fromHex(paymentRequest.outputs[0].script); */
           const outputs = [{
             sats: value,
-            script: newJob.toASM()
+            script: data.script.asm
           }];
 
-          //@ts-ignore
-          outputs.push({ sats: 0, args: [
-            'onchain',
-            '18pPQigu7j69ioDcUG9dACE1iAN9nCfowr', // boostpow bitcom
-            'job',
-            JSON.stringify({
-                index: 0
-            })
-          ], address: null })
-          
           outputs.push({
             sats: devFee,
             //@ts-ignore
             to: '1Nw9obzfFbPeERLAmSgN82dtkQ6qssaGnU', // dev revenue address
           })
+
           console.log("twetch.boost.send", outputs)
+
           const twetchResponse = await TwetchWeb3.abi({
             contract: 'payment',
             outputs
