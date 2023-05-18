@@ -4,7 +4,6 @@ import wrapRelayx from 'stag-relayx'
 import { BoostBuyResult } from './BoostButton'
 import styled from 'styled-components'
 import TwetchWeb3 from '@twetch/web3'
-import { AxiosResponse } from 'axios'
 
 interface superBoostPopupOptions {
   wallet: "relayx" | "twetch" | "handcash";
@@ -182,8 +181,6 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
   const [tag, setTag] = useState(defaultTag || '')
   const [price, setPrice] = useState(0)
   const [value, setValue] = useState(0)
-  const [devFee, setDevFee] = useState(0)
-  const [exchangeRate, setExchangeRate] = useState(0)
   const [minValue, setMinValue] = useState(Math.max(absolute_min_value, difficulty * min_profitability))
   const [maxValue, setMaxValue] = useState(difficulty * max_profitability)
   const [factor, setFactor]= useState(maxValue / minValue)
@@ -194,15 +191,6 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
   };
-
-  
-  useEffect(() => {
-    console.log("position",position)
-    axios.get('https://api.whatsonchain.com/v1/bsv/main/exchangerate').then((resp:AxiosResponse) => {
-      setExchangeRate(resp.data.rate.toFixed(2))
-      console.log("exchange rate", resp.data.rate.toFixed(2))
-    })
-  },[])
 
   useEffect(() => {
     console.log("min_value", Math.max(absolute_min_value, difficulty * min_profitability))
@@ -227,18 +215,13 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
   },[position, minValue, exponent])
 
   useEffect(() => {
-    console.log(value,"price",value * 1e-8 * exchangeRate)
-    setPrice(value * 1e-8 * exchangeRate)
-  }, [exchangeRate, value])
-
-  useEffect(() => {
-    setDevFee(Math.round(value * 0.1))
-  },[value])
-
+    console.log(value,"price")
+    setPrice(value)
+  }, [value])
 
   const handleChangeDifficulty = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault()
-    setDifficulty(parseFloat(e.target.value))
+    setDifficulty(parseFloat(e.target.value) || 0)
     setPosition(0.5)
   }
   const handleChangeTag = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -294,12 +277,6 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
             amount: value * 1e-8,
             currency: "BSV"
           }]
-          //@ts-ignore
-          outputs.push({
-            currency: 'BSV',
-            amount: devFee * 1e-8,
-            to: '1Nw9obzfFbPeERLAmSgN82dtkQ6qssaGnU', // dev revenue address
-          })
 
           console.log(outputs)
           //@ts-ignore
@@ -322,26 +299,6 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
 
           console.log('boost.send.result', boost_result)
 
-
-          /* const boost_result: BoostBuyResult = await stag.boost.buy({
-            content: contentTxid,
-            value: value,
-            difficulty: difficulty,
-            tag: tag,
-          })
-          //@ts-ignore
-          window.relayone
-            .send({
-              currency: 'BSV',
-              amount: devFee * 1e-8,
-              to: '1Nw9obzfFbPeERLAmSgN82dtkQ6qssaGnU', // dev revenue address
-            })
-            .then((result: any) => {
-              console.log('relayone.send.reward.result', result)
-            })
-            .catch((error: any) => {
-              console.log('relayone.send.reward.error', error)
-            }) */
           if (onSuccess) {
             onSuccess(boost_result)
           }
@@ -375,12 +332,6 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
             sats: value,
             script: data.script.asm
           }];
-
-          outputs.push({
-            sats: devFee,
-            //@ts-ignore
-            to: '1Nw9obzfFbPeERLAmSgN82dtkQ6qssaGnU', // dev revenue address
-          })
 
           console.log("twetch.boost.send", outputs)
 
@@ -519,7 +470,7 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
               <PopupButton
                 onClick={handleBoost}
               >
-                Buy {price < 0.01 ? `Boost ${value + devFee} satoshis`: `Boost $${price.toFixed(2)}`}
+                Buy {price < 100_000 ? `Boost ${price} satoshis`: `Boost ${(price * 1e-8).toFixed(5)} BSV`}
               </PopupButton>
             </PopupFooter>
           </PopupContainer>
