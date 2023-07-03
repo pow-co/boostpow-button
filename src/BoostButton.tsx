@@ -22,6 +22,7 @@ export interface BoostButtonProps {
   onError?: (Error: Error) => void;
   onSuccess?: (result: BoostBuyResult) => void;
   showDifficulty?: boolean;
+  doSign?: boolean;
 }
 
 const pulse = keyframes`
@@ -111,7 +112,7 @@ const BoostText = styled.p`
   ${(props) => props.theme === "dark" ? "color: rgb(209 213 219)":"color: rgb(107 114 128)"};
 `
 
-  const BoostButton = ({ wallet, content, difficulty, theme, tag, showDifficulty, onSending, onSuccess, onError }: BoostButtonProps) => {
+  const BoostButton = ({ wallet, content, difficulty, theme, tag, showDifficulty, onSending, onSuccess, onError, doSign }: BoostButtonProps) => {
     const [boostPopupOpen, setBoostPopupOpen] = useState(false)
   
     const handleBoost = (e: any) => {
@@ -160,7 +161,8 @@ const BoostText = styled.p`
           theme={theme}
           onError={onError}
           defaultTag={tag} 
-          onClose={() => setBoostPopupOpen(false)} />
+          onClose={() => setBoostPopupOpen(false)}
+          doSign={doSign} />
       </Drawer> 
     </>
   )

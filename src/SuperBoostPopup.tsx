@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import wrapRelayx from 'stag-relayx'
 import { BoostBuyResult } from './BoostButton'
 import styled from 'styled-components'
 import TwetchWeb3 from '@twetch/web3'
 import { AxiosResponse } from 'axios'
+
+import { Relayone, RelayoneSignResult, BoostJobParams, signBoostJob, LocalhostRelayone } from './relayone'
 
 interface superBoostPopupOptions {
   wallet: "relayx" | "twetch" | "handcash";
@@ -15,7 +16,7 @@ interface superBoostPopupOptions {
   onSending?: () => void;
   onError?: (Error: Error) => void;
   onSuccess?: (result: BoostBuyResult) => void;
-
+  doSign?: boolean;
 }
 
   const PopupBackground = styled.div`
@@ -189,10 +190,10 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
   const [factor, setFactor]= useState(maxValue / minValue)
   const [exponent, setExponent] = useState(Math.log(factor) / Math.log(minValue) + 1)
   const [position, setPosition] = useState(Math.max(((Math.log(default_profitability * difficulty) / Math.log(minValue) - 1) / (exponent - 1)),0))
-  const [isChecked, setIsChecked] = useState(true);
+  const [doSign, setDoSign] = useState(true);
 
   const handleCheckboxChange = () => {
-    setIsChecked(!isChecked);
+    setDoSign(!doSign);
   };
 
   
@@ -257,7 +258,7 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
       onSending()
     }
 
-    var jobParams: any = {
+    var jobParams: BoostJobParams = {
       content: contentTxid,
       difficulty
     }
@@ -265,29 +266,37 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
     if (tag) {
       jobParams['tag'] = tag
     }
-    
+
     switch (wallet){
       case "relayx":
+
         try {
-          //@ts-ignore
-          const stag = wrapRelayx(window.relayone)
-          if (isChecked){
-            const token = await stag.relayone.authBeta();
-            const [payload] = token.split(".");
-            const data = JSON.parse(atob(payload)); // Buffer.from(payload, 'base64')
-            let paymail = data.paymail
-            let pubkey = data.pubkey 
-            console.log("identity: ", { paymail, pubkey })
-            jobParams['additionalData'] = Buffer.from(`{
-              identity {
-                paymail: "${paymail}",
-                publicKey: "${pubkey}"
-              }
-            }`, 'utf-8').toString("hex")
+
+          if (doSign) {
+
+            //@ts-ignore
+
+            const isLocalhost = window.location.host !== 'pow.co'
+
+            //@ts-ignore
+            const relayone: Relayone = isLocalhost ? new LocalhostRelayone() : window.relayone as Relayone;
+
+            let signResult: RelayoneSignResult = await signBoostJob({
+              relayone, 
+              job: jobParams
+            })
+
+            console.log('relayone.RelayoneSignResult', signResult)
+
+            jobParams['additionalData'] = Buffer.from(JSON.stringify(signResult), 'utf-8').toString("hex")
+
           }
 
-	
-	  const { data } = await axios.post('https://pow.co/api/v1/boost/scripts', jobParams)
+          console.log("powco.boost.scripts.create.params", jobParams)
+
+          const { data } = await axios.post('https://pow.co/api/v1/boost/scripts', jobParams)
+
+          console.log("powco.boost.scripts.create.result", data)
 
           const outputs = [{
             to: data.script.asm,
@@ -302,8 +311,12 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
           })
 
           console.log(outputs)
+
           //@ts-ignore
-          const relayResponse = await window.relayone.send({outputs})
+          const relayResponse = await window.relayone.send({
+            outputs,
+            opReturn: []
+          })
 
           console.log("relayx.boost.response", relayResponse)
 
@@ -356,7 +369,7 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
       case "twetch":
 
         try {
-          if (isChecked){
+          if (doSign){
             let resp = await TwetchWeb3.connect()
             let paymail = resp.paymail.toString()
             let pubkey = resp.publicKey.toString()
@@ -510,7 +523,7 @@ const SuperBoostPopup = ({ wallet, contentTxId, defaultTag, theme, onClose, onSe
               </SliderContainer>
 
               <CheckboxWrapper>
-                <CheckboxInput type="checkbox" checked={isChecked} onChange={handleCheckboxChange} />
+                <CheckboxInput type="checkbox" checked={doSign} onChange={handleCheckboxChange} />
                 <CheckboxLabel>Sign with Paymail?</CheckboxLabel>
               </CheckboxWrapper>
 
